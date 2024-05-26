@@ -6,6 +6,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * DTO for {@link AppUser}
@@ -35,5 +36,5 @@ public class UserDto implements Serializable {
     String email;
     @NotNull
     @Size(max = 250)
-    String role;
+    Set<String> role;
 }

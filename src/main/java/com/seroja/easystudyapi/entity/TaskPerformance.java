@@ -39,8 +39,7 @@ public class TaskPerformance {
     @Column(name = "answer", nullable = false, length = Integer.MAX_VALUE)
     private String answer;
 
-    @NotNull
-    @Column(name = "grade", nullable = false)
+    @Column(name = "grade")
     private Integer grade;
 
 }

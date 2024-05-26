@@ -20,7 +20,7 @@ public class Application {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
-    private AppUser appUser;
+    private AppUser student;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

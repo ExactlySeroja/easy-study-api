@@ -1,6 +1,7 @@
 package com.seroja.easystudyapi.dto;
 
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -11,11 +12,19 @@ import java.time.LocalDate;
  */
 @Data
 public class CourseDto implements Serializable {
+    @NotNull
     Integer id;
     @NotNull
-    Integer applicationId;
+    @Size(max = 250)
+    String courseName;
     @NotNull
-    LocalDate dateOfIssue;
+    Integer categoryId;
     @NotNull
-    Integer studentId;
+    LocalDate courseStartDate;
+    @NotNull
+    LocalDate courseEndDate;
+    @NotNull
+    Integer coursePrice;
+    @NotNull
+    Integer teacherId;
 }

@@ -1,7 +1,8 @@
 package com.seroja.easystudyapi.service;
 
-import com.seroja.easystudyapi.dto.JwtRequest;
-import com.seroja.easystudyapi.dto.JwtResponse;
+import com.seroja.easystudyapi.dto.UserDto;
+import com.seroja.easystudyapi.dto.jwt.JwtRequest;
+import com.seroja.easystudyapi.dto.jwt.JwtResponse;
 import com.seroja.easystudyapi.exceptions.AuthErrorException;
 import com.seroja.easystudyapi.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,13 @@ public class AuthService {
             return new ResponseEntity<>(new AuthErrorException(HttpStatus.UNAUTHORIZED.value(), "Incorrect login or password"), HttpStatus.UNAUTHORIZED);
         }
         UserDetails userDetails = userService.loadUserByUsername(authRequest.getUsername());
-        String token = jwtTokenProvider.createToken(userDetails);
+        UserDto userDto = userService.getDtoByUsername(authRequest.getUsername());
+        String token = jwtTokenProvider.createToken(userDetails, userDto);
         return ResponseEntity.ok(new JwtResponse(token));
     }
+
+    public ResponseEntity<?> refreshAuthToken(String token) {
+        return ResponseEntity.ok(jwtTokenProvider.refreshToken(token));
+    }
+
 }

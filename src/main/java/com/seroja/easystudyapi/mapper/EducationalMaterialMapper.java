@@ -1,6 +1,7 @@
 package com.seroja.easystudyapi.mapper;
 
 import com.seroja.easystudyapi.dto.EducationalMaterialDto;
+import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
 import com.seroja.easystudyapi.entity.EducationalMaterial;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -16,6 +17,8 @@ public interface EducationalMaterialMapper {
     EducationalMaterial toEntity(EducationalMaterialDto educationalMaterialDto);
 
     List<EducationalMaterialDto> toDtoList(List<EducationalMaterial> educationalMaterialList);
+
+    List<EdMaterialAndTaskPerformanceQueryDto> toQueryDtoList(List<EducationalMaterial> educationalMaterialList);
 
     List<EducationalMaterial> toEntityList(List<EducationalMaterialDto> educationalMaterialDtoList);
 

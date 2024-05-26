@@ -1,4 +1,4 @@
-package com.seroja.easystudyapi.dto;
+package com.seroja.easystudyapi.dto.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

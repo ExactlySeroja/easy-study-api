@@ -1,18 +1,6 @@
 package com.seroja.easystudyapi.controller;
 
-import com.seroja.easystudyapi.Routes;
-import com.seroja.easystudyapi.dto.TaskPerformanceDto;
-import com.seroja.easystudyapi.service.TaskPerformanceService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.NoSuchElementException;
-
-@RestController
+/*@RestController
 @RequiredArgsConstructor
 public class TaskPerformanceController {
 
@@ -52,4 +40,4 @@ public class TaskPerformanceController {
         service.delete(id);
     }
 
-}
+}*/

@@ -2,6 +2,7 @@ package com.seroja.easystudyapi.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
@@ -18,6 +19,11 @@ public class EducationalMaterial {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ed_material_id", nullable = false)
     private Integer id;
+
+    @NotNull
+    @Column(name = "ed_material_name", nullable = false)
+    @Size(max = 250)
+    private String ed_material_name;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

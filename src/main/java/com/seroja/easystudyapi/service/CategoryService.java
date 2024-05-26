@@ -29,7 +29,9 @@ public class CategoryService {
     }
 
     public List<CategoryDto> listAll() {
-        return mapper.toDtoList(repository.findAll());
+        List<Category> categories = repository.findAll();
+
+        return mapper.toDtoList(categories);
     }
 
     public void delete(int id) {

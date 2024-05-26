@@ -1,5 +1,7 @@
 package com.seroja.easystudyapi.dto;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -13,13 +15,14 @@ import java.time.LocalDate;
 public class TaskPerformanceDto implements Serializable {
     Integer id;
     @NotNull
-    EducationalMaterialDto edMaterial;
+    Integer edMaterialId;
     @NotNull
     Integer studentId;
     @NotNull
     LocalDate dateOfCompletion;
     @NotNull
     String answer;
-    @NotNull
+    @Max(100)
+    @Min(0)
     Integer grade;
 }

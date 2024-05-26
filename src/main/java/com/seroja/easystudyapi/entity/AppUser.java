@@ -21,12 +21,12 @@ public class AppUser {
     @Column(name = "id", nullable = false)
     private Integer id;
 
-    @Size(max=250)
+    @Size(max = 250)
     @NotNull
     @Column(name = "username", nullable = false, length = 250)
     private String username;
 
-    @Size(max=250)
+    @Size(max = 250)
     @NotNull
     @Column(name = "password", nullable = false, length = 250)
     private String password;
@@ -50,7 +50,6 @@ public class AppUser {
     @Column(name = "email", nullable = false, length = 250)
     private String email;
 
-    @NotNull
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "username"))
     @Column(name = "role")

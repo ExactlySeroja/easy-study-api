@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class ApplicationDto {
     Integer id;
     @NotNull
-    Integer userId;
+    Integer studentId;
     @NotNull
     Integer courseId;
     @NotNull

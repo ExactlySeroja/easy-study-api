@@ -1,7 +1,5 @@
 package com.seroja.easystudyapi.service;
 
-import com.seroja.easystudyapi.Routes;
-import com.seroja.easystudyapi.dto.JwtRequest;
 import com.seroja.easystudyapi.dto.UserDto;
 import com.seroja.easystudyapi.entity.AppUser;
 import com.seroja.easystudyapi.mapper.UserMapper;
@@ -9,17 +7,16 @@ import com.seroja.easystudyapi.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -30,14 +27,24 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
     private final UserMapper mapper;
+    private final BCryptPasswordEncoder passwordEncoder;
+
 
     public UserDto save(UserDto dto) {
-        return mapper.toDto(repository.save(mapper.toEntity(dto)));
+        AppUser appUser = mapper.toEntity(dto);
+        appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+
+        return mapper.toDto(repository.save(appUser));
     }
 
-    public UserDto getDto(int id) {
-        return mapper.toDto(repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "CPU was not found!")));
+    public UserDto getDto(Principal principal) {
+        AppUser appUser = repository.findUserByUsername(principal.getName()).get();
+        return mapper.toDto(appUser);
+    }
+
+    public UserDto getDtoByUsername(String username) {
+        AppUser appUser = repository.findUserByUsername(username).get();
+        return mapper.toDto(appUser);
     }
 
     public List<UserDto> listAll() {
@@ -73,11 +80,12 @@ public class UserService implements UserDetailsService {
             return new ResponseEntity<>("User with username " + dto.getUsername() + " already exists", HttpStatus.OK);
         }
         AppUser appUser = mapper.toEntity(dto);
-        if(appUser.getRole().equals("STUDENT")) {
+        if (appUser.getRole().equals(Set.of("STUDENT"))) {
             appUser.setRole(Set.of("STUDENT"));
-        } else if (appUser.getRole().equals("TEACHER")) {
+        } else if (appUser.getRole().equals(Set.of("TEACHER"))) {
             appUser.setRole(Set.of("TEACHER"));
         } else return new ResponseEntity<>("Invalid role", HttpStatus.BAD_REQUEST);
+        appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
         repository.save(appUser);
         return new ResponseEntity<>("Successfully registration!", HttpStatus.OK);
     }
