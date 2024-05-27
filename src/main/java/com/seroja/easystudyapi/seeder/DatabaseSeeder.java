@@ -28,14 +28,30 @@ public class DatabaseSeeder {
 
     @EventListener
     public void seed(ContextRefreshedEvent event) {
-        seedUsersTable();
-        seedCategoryTable();
-        seedCourseTable();
-        seedApplicationTable();
-        seedThemeTable();
-        seedEducationMaterialTable();
-        seedTaskPerformanceTable();
-        seedCertificateTable();
+        if (userRepository.count() == 0) {
+            seedUsersTable();
+        }
+        if (categoryRepository.count() == 0) {
+            seedCategoryTable();
+        }
+        if (courseRepository.count() == 0) {
+            seedCourseTable();
+        }
+        if (applicationRepository.count() == 0) {
+            seedApplicationTable();
+        }
+        if (themeRepository.count() == 0) {
+            seedThemeTable();
+        }
+        if (educationalMaterialRepository.count() == 0) {
+            seedEducationMaterialTable();
+        }
+        if (taskPerformanceRepository.count() == 0) {
+            seedTaskPerformanceTable();
+        }
+        if (certificateRepository.count() == 0) {
+            seedCertificateTable();
+        }
     }
 
     private void seedUsersTable() {
