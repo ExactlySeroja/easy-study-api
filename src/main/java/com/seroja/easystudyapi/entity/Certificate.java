@@ -32,7 +32,7 @@ public class Certificate {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @OnDelete(action = OnDeleteAction.CASCADE)
-    @JoinColumn(name = "student_id", nullable = false)
-    private AppUser student;
+    @JoinColumn(name = "teacher_id", nullable = false)
+    private AppUser teacher;
 
 }

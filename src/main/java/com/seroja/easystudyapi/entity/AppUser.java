@@ -23,7 +23,7 @@ public class AppUser {
 
     @Size(max = 250)
     @NotNull
-    @Column(name = "username", nullable = false, length = 250)
+    @Column(name = "username", nullable = false, length = 250, unique = true)
     private String username;
 
     @Size(max = 250)
@@ -42,12 +42,12 @@ public class AppUser {
 
     @Size(max = 15)
     @NotNull
-    @Column(name = "phone_number", nullable = false, length = 15)
+    @Column(name = "phone_number", nullable = false, length = 15, unique = true)
     private String phoneNumber;
 
     @Size(max = 250)
     @NotNull
-    @Column(name = "email", nullable = false, length = 250)
+    @Column(name = "email", nullable = false, length = 250, unique = true)
     private String email;
 
     @ElementCollection(fetch = FetchType.EAGER)
