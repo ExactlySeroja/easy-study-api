@@ -33,9 +33,6 @@ public class SecurityConfig {
 
                         .requestMatchers(Routes.TEACHER + "/**",
                                 Routes.STUDENT_GET_ALL_MY_COURSES,
-                                Routes.STUDENT_GET_ALL_AVAILABLE_COURSES,
-                                Routes.STUDENT_GET_ALL_THEMES_BY_COURSE,
-                                Routes.STUDENT_GET_ALL_MATERIALS_BY_THEME,
                                 Routes.STUDENT_FILTER_COURSE_BY_NAME,
                                 Routes.STUDENT_FILTER_COURSE_BY_CATEGORY,
                                 Routes.STUDENT_FILTER_COURSE_BY_PRICE,
@@ -47,31 +44,28 @@ public class SecurityConfig {
                                 Routes.STUDENT_ADD_TASK_PERFORMANCE).hasRole("STUDENT")
 
                         .requestMatchers(Routes.TEACHER + "/**",
-                                Routes.TEACHER_ADD_APPLICATION,
-                                Routes.TEACHER_ADD_CATEGORY,
-                                Routes.TEACHER_ADD_CERTIFICATE,
-                                Routes.TEACHER_ADD_COURSE,
-                                Routes.TEACHER_ADD_THEME,
-                                Routes.TEACHER_ADD_CATEGORY,
-                                Routes.TEACHER_ADD_EDUCATIONAL_MATERIAL,
-                                Routes.TEACHER_ADD_USER,
-                                Routes.TEACHER_CHECK_APPLICATION_BY_ID,
-                                Routes.TEACHER_GET_ALL_APPLICATIONS,
-                                Routes.TEACHER_CATEGORY_BY_ID,
-                                Routes.TEACHER_GET_ALL_CATEGORIES,
-                                Routes.TEACHER_CERTIFICATE_BY_ID,
+                                Routes.TEACHER_GET_ALL_MY_COURSES,
+                                Routes.TEACHER_GET_COURSE_BY_ID,
+                                Routes.TEACHER_CREATE_NEW_COURSE,
+                                Routes.TEACHER_CREATE_THEME,
+                                Routes.TEACHER_GET_THEME_BY_ID,
+                                Routes.TEACHER_GET_MATERIAL_BY_ID,
+                                Routes.TEACHER_CREATE_NEW_MATERIAL,
+                                Routes.TEACHER_GET_ALL_TASK_PERFORMANCE_BY_MATERIAL,
+                                Routes.TEACHER_UPDATE_PERFORMANCE,
+                                Routes.TEACHER_CREATE_NEW_CERTIFICATE,
                                 Routes.TEACHER_GET_ALL_CERTIFICATES,
-                                Routes.TEACHER_COURSE_BY_ID,
-                                Routes.TEACHER_GET_ALL_COURSES,
-                                Routes.TEACHER_EDUCATIONAL_MATERIAL_BY_ID,
-                                Routes.TEACHER_GET_ALL_EDUCATIONAL_MATERIAL,
-                                Routes.TEACHER_TASK_PERFORMANCE_BY_ID,
-                                Routes.TEACHER_GET_ALL_TASK_PERFORMANCE,
-                                Routes.TEACHER_THEME_BY_ID,
-                                Routes.TEACHER_GET_ALL_THEMES,
-                                Routes.TEACHER_USER_BY_ID,
-                                Routes.TEACHER_GET_ALL_USER
+                                Routes.TEACHER_GET_CERTIFICATE_BY_ID,
+                                Routes.TEACHER_GET_ALL_APPLICATIONS,
+                                Routes.TEACHER_GET_APPLICATION_BY_ID,
+                                Routes.TEACHER_GET_STUDENTS,
+                                Routes.TEACHER_MY_PROFILE
                         ).hasRole("TEACHER")
+
+                        .requestMatchers(Routes.GET_ALL_COURSES,
+                                Routes.GET_ALL_THEMES_BY_COURSE,
+                                Routes.GET_MATERIALS_BY_THEME,
+                                Routes.GET_ALL_CATEGORIES).hasAnyRole("TEACHER", "STUDENT")
 
                         .anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)

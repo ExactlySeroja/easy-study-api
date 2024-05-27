@@ -1,9 +1,14 @@
 package com.seroja.easystudyapi.service;
 
+import com.seroja.easystudyapi.dto.CategoryDto;
+import com.seroja.easystudyapi.dto.CourseDto;
+import com.seroja.easystudyapi.dto.ThemeDto;
 import com.seroja.easystudyapi.dto.UserDto;
+import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
 import com.seroja.easystudyapi.entity.AppUser;
-import com.seroja.easystudyapi.mapper.UserMapper;
-import com.seroja.easystudyapi.repository.UserRepository;
+import com.seroja.easystudyapi.entity.EducationalMaterial;
+import com.seroja.easystudyapi.mapper.*;
+import com.seroja.easystudyapi.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,7 +21,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -27,32 +31,24 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
     private final UserMapper mapper;
+
     private final BCryptPasswordEncoder passwordEncoder;
 
+    private final CourseRepository courseRepository;
+    private final CourseMapper courseMapper;
 
-    public UserDto save(UserDto dto) {
-        AppUser appUser = mapper.toEntity(dto);
-        appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
+    private final ThemeRepository themeRepository;
+    private final ThemeMapper themeMapper;
 
-        return mapper.toDto(repository.save(appUser));
-    }
+    private final EducationalMaterialRepository educationalMaterialRepository;
+    private final EducationalMaterialMapper educationalMaterialMapper;
 
-    public UserDto getDto(Principal principal) {
-        AppUser appUser = repository.findUserByUsername(principal.getName()).get();
-        return mapper.toDto(appUser);
-    }
+    private final CategoryRepository categoryRepository;
+    private final CategoryMapper categoryMapper;
 
     public UserDto getDtoByUsername(String username) {
         AppUser appUser = repository.findUserByUsername(username).get();
         return mapper.toDto(appUser);
-    }
-
-    public List<UserDto> listAll() {
-        return mapper.toDtoList(repository.findAll());
-    }
-
-    public void delete(int id) {
-        repository.deleteById(id);
     }
 
     public void update(UserDto dto, int id) {
@@ -61,6 +57,23 @@ public class UserService implements UserDetailsService {
         AppUser updatedEntity = mapper.toEntity(dto);
         mapper.update(existingEntity, updatedEntity);
         repository.save(existingEntity);
+    }
+
+    public List<CourseDto> getAllCourses() {
+        return courseMapper.toDtoList(courseRepository.findAll());
+    }
+
+    public List<ThemeDto> getAllThemesByCourseId(int courseId) {
+        return themeMapper.toDtoList(themeRepository.findByCourseId(courseId));
+    }
+
+    public List<EdMaterialAndTaskPerformanceQueryDto> getAllEducationalMaterialsByTheme(int id) {
+        List<EducationalMaterial> educationalMaterials = educationalMaterialRepository.findEducationalMaterialByThemeId(id);
+        return educationalMaterialMapper.toQueryDtoList(educationalMaterials);
+    }
+
+    public List<CategoryDto> getAllCategories() {
+        return categoryMapper.toDtoList(categoryRepository.findAll());
     }
 
     @Override
@@ -93,4 +106,5 @@ public class UserService implements UserDetailsService {
     public Optional<AppUser> findAppUserByUsername(String username) {
         return repository.findUserByUsername(username);
     }
+
 }

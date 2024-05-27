@@ -16,6 +16,6 @@ public interface CourseRepository extends JpaRepository<Course, Integer> {
     List<Course> findByCategoryId(int categoryId);
 
     @Query(value = "SELECT c.course_id,  c.course_name, c.course_start_date, c.course_end_date, c.course_price, c.category_id, c.teacher_id FROM course c left join application a on c.course_id = a.course_id where a.user_id = ?", nativeQuery = true)
-    List<Course> findByStudentId(int id);
+    List<Course> findByUserId(int id);
 
 }

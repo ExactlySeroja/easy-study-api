@@ -1,54 +1,52 @@
 package com.seroja.easystudyapi.controller;
 
 import com.seroja.easystudyapi.Routes;
+import com.seroja.easystudyapi.dto.CategoryDto;
+import com.seroja.easystudyapi.dto.CourseDto;
+import com.seroja.easystudyapi.dto.ThemeDto;
 import com.seroja.easystudyapi.dto.UserDto;
 import com.seroja.easystudyapi.dto.jwt.JwtRequest;
 import com.seroja.easystudyapi.dto.jwt.JwtResponse;
+import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
 import com.seroja.easystudyapi.service.AuthService;
 import com.seroja.easystudyapi.service.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
 public class UserController {
 
-    private final UserService service;
+    private final UserService userService;
     private final AuthService authService;
 
-    @GetMapping(Routes.TEACHER_USER_BY_ID)
-    public ResponseEntity<UserDto> get(Principal principal) {
-        try {
-            return new ResponseEntity<>(service.getDto(principal), HttpStatus.OK);
-        } catch (NoSuchElementException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+    //general
+    @GetMapping(value = Routes.GET_ALL_COURSES)
+    public List<CourseDto> getAllCourses() {
+        return userService.getAllCourses();
     }
 
-    @GetMapping(Routes.TEACHER_GET_ALL_USER)
-    public List<UserDto> list() {
-        return service.listAll();
+    //general
+    @GetMapping(value = Routes.GET_ALL_THEMES_BY_COURSE)
+    public List<ThemeDto> getAllThemesByCourse(@PathVariable int id) {
+        return userService.getAllThemesByCourseId(id);
     }
 
+    //general
+    @GetMapping(value = Routes.GET_MATERIALS_BY_THEME)
+    public List<EdMaterialAndTaskPerformanceQueryDto> getAllEducationalMaterialByTheme(@PathVariable int id) {
+        return userService.getAllEducationalMaterialsByTheme(id);
+    }
 
-    /*@PutMapping(Routes.TEACHER_USER_BY_ID)
-    public ResponseEntity<?> update(@RequestBody @Valid UserDto dto, @PathVariable Integer id) {
-        service.update(dto, id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }*/
-
-    /*@DeleteMapping(Routes.TEACHER_USER_BY_ID)
-    public void delete(@PathVariable Integer id) {
-        service.delete(id);
-    }*/
+    //general
+    @GetMapping(value = Routes.GET_ALL_CATEGORIES)
+    public List<CategoryDto> getAllCategories() {
+        return userService.getAllCategories();
+    }
 
     @PostMapping(value = Routes.LOGIN)
     public ResponseEntity<?> createAuthToken(@RequestBody JwtRequest authRequest) {
@@ -57,7 +55,7 @@ public class UserController {
 
     @PostMapping(value = Routes.REGISTER_ROUTE_SECURITY, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> registrationOfUser(@RequestBody UserDto dto) {
-        return service.registerUser(dto);
+        return userService.registerUser(dto);
     }
 
     @PostMapping(value = Routes.REFRESH_TOKEN)

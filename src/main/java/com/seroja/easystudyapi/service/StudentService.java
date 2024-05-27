@@ -1,11 +1,9 @@
 package com.seroja.easystudyapi.service;
 
 import com.seroja.easystudyapi.dto.*;
-import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
 import com.seroja.easystudyapi.entity.Application;
 import com.seroja.easystudyapi.entity.Certificate;
 import com.seroja.easystudyapi.entity.Course;
-import com.seroja.easystudyapi.entity.EducationalMaterial;
 import com.seroja.easystudyapi.mapper.*;
 import com.seroja.easystudyapi.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +24,6 @@ public class StudentService {
     private final CourseMapper courseMapper;
     private final ApplicationRepository applicationRepository;
     private final ApplicationMapper applicationMapper;
-    private final ThemeRepository themeRepository;
-    private final ThemeMapper themeMapper;
     private final EducationalMaterialRepository educationalMaterialRepository;
     private final EducationalMaterialMapper educationalMaterialMapper;
     private final CertificateRepository certificateRepository;
@@ -38,21 +34,8 @@ public class StudentService {
 
     public List<CourseDto> getAllMyCourses(Principal principal) {
         int userId = userRepository.findUserByUsername(principal.getName()).get().getId();
-        List<Course> courses = courseRepository.findByStudentId(userId);
+        List<Course> courses = courseRepository.findByUserId(userId);
         return courseMapper.toDtoList(courses);
-    }
-
-    public List<CourseDto> getAllCourses() {
-        return courseMapper.toDtoList(courseRepository.findAll());
-    }
-
-    public List<ThemeDto> getAllThemesByCourse(int id) {
-        return themeMapper.toDtoList(themeRepository.findByCourseId(id));
-    }
-
-    public List<EdMaterialAndTaskPerformanceQueryDto> getAllEducationalMaterialsByTheme(int id) {
-        List<EducationalMaterial> educationalMaterials = educationalMaterialRepository.findEducationalMaterialByThemeId(id);
-        return educationalMaterialMapper.toQueryDtoList(educationalMaterials);
     }
 
     public List<CourseDto> findCoursesByName(String name) {

@@ -2,7 +2,6 @@ package com.seroja.easystudyapi.controller;
 
 import com.seroja.easystudyapi.Routes;
 import com.seroja.easystudyapi.dto.*;
-import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
 import com.seroja.easystudyapi.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -25,21 +24,6 @@ public class StudentController {
     @GetMapping(value = Routes.STUDENT_GET_ALL_MY_COURSES)
     public List<CourseDto> getAllMyCourses(Principal principal) {
         return studentService.getAllMyCourses(principal);
-    }
-
-    @GetMapping(value = Routes.STUDENT_GET_ALL_AVAILABLE_COURSES)
-    public List<CourseDto> getAllCourses() {
-        return studentService.getAllCourses();
-    }
-
-    @GetMapping(value = Routes.STUDENT_GET_ALL_THEMES_BY_COURSE)
-    public List<ThemeDto> getAllThemesByCourse(@PathVariable int courseId) {
-        return studentService.getAllThemesByCourse(courseId);
-    }
-
-    @GetMapping(value = Routes.STUDENT_GET_ALL_MATERIALS_BY_THEME)
-    public List<EdMaterialAndTaskPerformanceQueryDto> getAllEdMaterialAndTaskPerformance(@PathVariable int themeId) {
-        return studentService.getAllEducationalMaterialsByTheme(themeId);
     }
 
     @GetMapping(value = Routes.STUDENT_FILTER_COURSE_BY_NAME)
