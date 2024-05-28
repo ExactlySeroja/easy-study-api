@@ -26,7 +26,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtTokenFilter jwtTokenFilter) throws Exception {
         http.authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(Routes.REGISTER_ROUTE_SECURITY,
-                                Routes.LOGIN).permitAll()
+                                Routes.LOGIN,
+                                Routes.CHECK_EXISTING_USER_EMAIL,
+                                Routes.CHECK_EXISTING_USER_USERNAME,
+                                Routes.CHECK_EXISTING_USER_PHONE).permitAll()
 
                         .requestMatchers(Routes.SWAGGER_ENDPOINTS).permitAll()
                         .requestMatchers("/v3/api-docs", "/swagger-ui/**", "/swagger-ui.html", "/webjars/**").permitAll()

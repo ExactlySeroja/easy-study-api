@@ -64,17 +64,17 @@ public class UserController {
     }
 
     @GetMapping(value = Routes.CHECK_EXISTING_USER_EMAIL)
-    public boolean checkUserEmail(@RequestBody String email) {
+    public ResponseEntity<?> checkUserEmail(@RequestParam String email) {
         return userService.checkUserEmail(email);
     }
 
     @GetMapping(value = Routes.CHECK_EXISTING_USER_PHONE)
-    public boolean checkUserPhoneNumber(@RequestBody String phoneNumber) {
+    public ResponseEntity<?> checkUserPhoneNumber(@RequestParam String phoneNumber) {
         return userService.checkUserPhoneNumber(phoneNumber);
     }
 
     @GetMapping(value = Routes.CHECK_EXISTING_USER_USERNAME)
-    public boolean checkUserUsername(@RequestBody String username) {
+    public ResponseEntity<?> checkUserUsername(@RequestParam String username) {
         return userService.checkUserUsername(username);
     }
 

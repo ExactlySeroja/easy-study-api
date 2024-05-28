@@ -107,16 +107,23 @@ public class UserService implements UserDetailsService {
         return repository.findUserByUsername(username);
     }
 
-    public boolean checkUserEmail(String email){
-        return repository.existsByEmail(email);
+    public ResponseEntity<?> checkUserEmail(String email){
+        if (repository.existsByEmail(email)){
+            return new ResponseEntity<>("User with email " + email + " already exists", HttpStatus.BAD_REQUEST);
+        } return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    public boolean checkUserPhoneNumber(String phoneNumber){
-        return repository.existsByPhoneNumber(phoneNumber);
+    public ResponseEntity<?> checkUserPhoneNumber(String phoneNumber){
+        if (repository.existsByPhoneNumber(phoneNumber)){
+            return new ResponseEntity<>("User with phone number " + phoneNumber + " already exists", HttpStatus.BAD_REQUEST);
+        } else return ResponseEntity.ok(HttpStatus.OK);
+
     }
 
-    public boolean checkUserUsername(String username){
-        return repository.existsByUsername(username);
+    public ResponseEntity<?> checkUserUsername(String username){
+        if(repository.existsByUsername(username)){
+            return new ResponseEntity<>("User with username " + username + " already exists", HttpStatus.BAD_REQUEST);
+        } else return ResponseEntity.ok(HttpStatus.OK);
     }
 
 }
