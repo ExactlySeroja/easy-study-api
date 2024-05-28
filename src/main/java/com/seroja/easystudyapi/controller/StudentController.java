@@ -6,10 +6,7 @@ import com.seroja.easystudyapi.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -62,16 +59,16 @@ public class StudentController {
     }
 
     @PostMapping(value = Routes.STUDENT_CREATE_APPLICATION)
-    public ResponseEntity<?> createApplication(ApplicationDto applicationDto) {
+    public ResponseEntity<?> createApplication(@RequestBody ApplicationRequestDto applicationRequestDto, Principal principal) {
         try {
-            return new ResponseEntity<>(studentService.createApplication(applicationDto), HttpStatus.OK);
+            return new ResponseEntity<>(studentService.createApplication(applicationRequestDto, principal), HttpStatus.OK);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
     @PostMapping(value = Routes.STUDENT_ADD_TASK_PERFORMANCE)
-    public ResponseEntity<?> createTask(TaskPerformanceDto taskPerformanceDto) {
+    public ResponseEntity<?> createTask(@RequestBody TaskPerformanceDto taskPerformanceDto) {
         try {
             return new ResponseEntity<>(studentService.createTaskPerformance(taskPerformanceDto), HttpStatus.OK);
         } catch (NoSuchElementException e) {

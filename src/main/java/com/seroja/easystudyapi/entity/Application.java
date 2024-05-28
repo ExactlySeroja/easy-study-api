@@ -32,7 +32,7 @@ public class Application {
     private LocalDate dateOfCreation;
 
     @NotNull
-    @Column(name = "\"application_status \"", nullable = false, columnDefinition = "boolean default false")
-    private Boolean applicationStatus;
+    @Column(name = "application_status", nullable = false)
+    private Boolean applicationStatus = false;
 
 }

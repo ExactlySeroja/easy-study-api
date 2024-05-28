@@ -6,6 +6,7 @@ import com.seroja.easystudyapi.entity.Certificate;
 import com.seroja.easystudyapi.entity.Course;
 import com.seroja.easystudyapi.mapper.*;
 import com.seroja.easystudyapi.repository.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 
@@ -86,9 +88,15 @@ public class StudentService {
         return educationalMaterialMapper.toDto(educationalMaterialRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Material was not found!")));
     }
-
-    public ApplicationDto createApplication(ApplicationDto applicationDto) {
-        return applicationMapper.toDto(applicationRepository.save(applicationMapper.toEntity(applicationDto)));
+    @Transactional
+    public ApplicationDto createApplication(ApplicationRequestDto applicationRequestDto, Principal principal) {
+        ApplicationDto applicationDto = new ApplicationDto();
+        int userId = userRepository.findUserByUsername(principal.getName()).get().getId();
+        applicationDto.setStudentId(userId);
+        applicationDto.setCourseId(applicationRequestDto.getCourseId());
+        applicationDto.setDateOfCreation(LocalDate.now());
+        applicationDto.setApplicationStatus(false);
+        return applicationMapper.toDto( applicationRepository.save(applicationMapper.toEntity(applicationDto)));
     }
 
     public TaskPerformanceDto createTaskPerformance(TaskPerformanceDto taskPerformanceDto) {
