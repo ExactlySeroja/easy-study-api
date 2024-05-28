@@ -4,6 +4,7 @@ import com.seroja.easystudyapi.dto.*;
 import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceProjection;
 import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
 import com.seroja.easystudyapi.dto.query.ProfileDto;
+import com.seroja.easystudyapi.entity.Application;
 import com.seroja.easystudyapi.entity.Course;
 import com.seroja.easystudyapi.entity.TaskPerformance;
 import com.seroja.easystudyapi.mapper.*;
@@ -35,7 +36,6 @@ public class TeacherService {
     private final EducationalMaterialMapper educationalMaterialMapper;
 
     private final TaskPerformanceRepository taskPerformanceRepository;
-    private final TaskPerformanceMapper taskPerformanceMapper;
 
     private final CertificateRepository certificateRepository;
     private final CertificateMapper certificateMapper;
@@ -63,12 +63,10 @@ public class TeacherService {
         return themeMapper.toDto(themeRepository.save(themeMapper.toEntity(themeDto)));
     }
 
-
     public ThemeDto getThemeById(int id) {
         return themeMapper.toDto(themeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Theme was not found!")));
     }
-
 
     public EducationalMaterialDto getEducationalMaterialById(int id) {
         return educationalMaterialMapper.toDto(educationalMaterialRepository.findById(id)
@@ -114,6 +112,13 @@ public class TeacherService {
         taskPerformanceRepository.save(existingEntity);
     }
 
+    public void updateApplicationStatus(boolean status, int id) {
+        Application existingEntity = applicationRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
+        existingEntity.setApplicationStatus(status);
+        applicationRepository.save(existingEntity);
+    }
+
     public CertificateDto createCertificate(CertificateDto certificateDto) {
         return certificateMapper.toDto(certificateRepository.save(certificateMapper.toEntity(certificateDto)));
     }
@@ -137,7 +142,6 @@ public class TeacherService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "CPU was not found!")));
     }
 
-
     public List<ProfileDto> getAllStudents() {
         return userMapper.toProfileDtoList(userRepository.findAllStudents());
     }
@@ -145,6 +149,5 @@ public class TeacherService {
     public ProfileDto getMyProfile(Principal principal) {
         return userMapper.toProfileDto(userRepository.findUserByUsername(principal.getName()).get());
     }
-
 
 }

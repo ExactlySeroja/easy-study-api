@@ -80,6 +80,12 @@ public class TeacherController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping(value = Routes.TEACHER_GET_APPLICATION_BY_ID)
+    public ResponseEntity<?> updateApplicationStatus(@RequestBody boolean status, @PathVariable int id) {
+        teacherService.updateApplicationStatus(status, id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
     @PostMapping(value = Routes.TEACHER_CREATE_NEW_CERTIFICATE)
     public ResponseEntity<?> createCertificate(@RequestBody CertificateDto certificateDto) {
         try {
