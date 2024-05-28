@@ -11,9 +11,11 @@ import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface TaskPerformanceMapper {
+    @Mapping(source = "edMaterial.id", target = "edMaterialId")
     @Mapping(source = "doneBy.id", target = "studentId")
     TaskPerformanceDto toDto(TaskPerformance taskPerformance);
 
+    @Mapping(source = "edMaterialId", target = "edMaterial.id")
     @Mapping(source = "studentId", target = "doneBy.id")
     TaskPerformance toEntity(TaskPerformanceDto taskPerformanceDto);
 

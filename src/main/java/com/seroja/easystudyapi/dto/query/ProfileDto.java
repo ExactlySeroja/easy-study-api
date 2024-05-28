@@ -26,5 +26,4 @@ public class ProfileDto {
     @Email
     @Size(max = 250)
     String email;
-
 }

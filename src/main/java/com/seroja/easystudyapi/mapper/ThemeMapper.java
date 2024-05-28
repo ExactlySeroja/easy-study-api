@@ -11,8 +11,10 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ThemeMapper {
 
+    @Mapping(source = "course.id", target = "courseId")
     ThemeDto toDto(Theme theme);
 
+    @Mapping(source = "courseId", target = "course.id")
     Theme toEntity(ThemeDto themeDto);
 
     List<ThemeDto> toDtoList(List<Theme> themes);

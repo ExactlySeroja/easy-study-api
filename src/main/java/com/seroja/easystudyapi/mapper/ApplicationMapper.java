@@ -11,8 +11,12 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ApplicationMapper {
 
+    @Mapping(source = "student.id", target = "studentId")
+    @Mapping(source = "course.id", target = "courseId")
     ApplicationDto toDto(Application application);
 
+    @Mapping(source = "studentId", target = "student.id")
+    @Mapping(source = "courseId", target = "course.id")
     Application toEntity(ApplicationDto applicationDto);
 
     List<ApplicationDto> toDtoList(List<Application> applications);

@@ -1,6 +1,5 @@
 package com.seroja.easystudyapi.repository;
 
-import com.seroja.easystudyapi.dto.query.ProfileDto;
 import com.seroja.easystudyapi.entity.AppUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -16,7 +15,6 @@ public interface UserRepository extends JpaRepository<AppUser, Integer> {
 
     boolean existsByUsername(String username);
 
-
-    @Query(value = "select u.id, u.full_name, u.username, u.date_of_birth, u.phone_number, u.email from app_user u  JOIN public.user_roles ur ON u.username = ur.username where role = 'STUDENT'", nativeQuery = true)
-    List<ProfileDto> finAllStudents();
+    @Query(value = "SELECT u.* FROM app_user u JOIN user_roles ur ON u.username = ur.username WHERE ur.role = 'STUDENT'", nativeQuery = true)
+    List<AppUser> findAllStudents();
 }

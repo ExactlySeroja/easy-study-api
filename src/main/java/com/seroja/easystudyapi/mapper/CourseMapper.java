@@ -12,8 +12,12 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CourseMapper {
 
+    @Mapping(source = "category.categoryId", target = "categoryId")
+    @Mapping(source = "teacher.id", target = "teacherId")
     CourseDto toDto(Course course);
 
+    @Mapping(source = "categoryId", target = "category.categoryId")
+    @Mapping(source = "teacherId", target = "teacher.id")
     Course toEntity(CourseDto courseDto);
 
     List<CourseDto> toDtoList(List<Course> courseList);

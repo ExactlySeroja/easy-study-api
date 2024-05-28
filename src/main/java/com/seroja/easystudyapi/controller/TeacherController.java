@@ -3,6 +3,7 @@ package com.seroja.easystudyapi.controller;
 
 import com.seroja.easystudyapi.Routes;
 import com.seroja.easystudyapi.dto.*;
+import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
 import com.seroja.easystudyapi.dto.query.ProfileDto;
 import com.seroja.easystudyapi.service.TeacherService;
 import lombok.RequiredArgsConstructor;
@@ -68,9 +69,9 @@ public class TeacherController {
         }
     }
 
-    @PostMapping(value = Routes.TEACHER_GET_ALL_TASK_PERFORMANCE_BY_MATERIAL)
-    public List<TaskPerformanceDto> getAllTaskPerformancesByMaterial(@PathVariable int id) {
-        return teacherService.getAllTaskPerformancesByMaterial(id);
+    @GetMapping(value = Routes.TEACHER_GET_ALL_TASK_PERFORMANCE_BY_MATERIAL)
+    public List<EdMaterialAndTaskPerformanceQueryDto> getAllTaskPerformancesByMaterial(@PathVariable int id) {
+        return teacherService.findEducationalMaterialAndTaskPerformanceById(id);
     }
 
     @PutMapping(value = Routes.TEACHER_UPDATE_PERFORMANCE)
@@ -99,8 +100,8 @@ public class TeacherController {
     }
 
     @GetMapping(value = Routes.TEACHER_GET_ALL_APPLICATIONS)
-    public List<ApplicationDto> getAllApplications() {
-        return teacherService.getAllApplications();
+    public List<ApplicationDto> getAllApplications(Principal principal) {
+        return teacherService.getAllApplications(principal);
     }
 
     @GetMapping(value = Routes.TEACHER_GET_APPLICATION_BY_ID)

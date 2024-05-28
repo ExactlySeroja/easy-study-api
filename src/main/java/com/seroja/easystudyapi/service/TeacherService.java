@@ -1,6 +1,8 @@
 package com.seroja.easystudyapi.service;
 
 import com.seroja.easystudyapi.dto.*;
+import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceProjection;
+import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
 import com.seroja.easystudyapi.dto.query.ProfileDto;
 import com.seroja.easystudyapi.entity.Course;
 import com.seroja.easystudyapi.entity.TaskPerformance;
@@ -14,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -76,8 +79,32 @@ public class TeacherService {
         return educationalMaterialMapper.toDto(educationalMaterialRepository.save(educationalMaterialMapper.toEntity(educationalMaterialDto)));
     }
 
-    public List<TaskPerformanceDto> getAllTaskPerformancesByMaterial(int id) {
-        return taskPerformanceMapper.toDtoList(taskPerformanceRepository.findByEdMaterialId(id));
+    public List<EdMaterialAndTaskPerformanceQueryDto> findEducationalMaterialAndTaskPerformanceById(int edMaterialId) {
+        List<EdMaterialAndTaskPerformanceProjection> projections = educationalMaterialRepository.findEducationalMaterialAndTaskPerformanceById(edMaterialId);
+        return projections.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
+
+    private EdMaterialAndTaskPerformanceQueryDto convertToDto(EdMaterialAndTaskPerformanceProjection projection) {
+        EdMaterialAndTaskPerformanceQueryDto dto = new EdMaterialAndTaskPerformanceQueryDto();
+        dto.setId(projection.getId());
+        dto.setName(projection.getName());
+        dto.setDateOfUpload(projection.getDateOfUpload());
+        if (projection.getTaskPerformanceDtoId() != null) {
+            TaskPerformanceDto taskDto = getTaskPerformanceDto(projection);
+            dto.setTaskPerformanceDto(taskDto);
+        }
+        return dto;
+    }
+
+    private static TaskPerformanceDto getTaskPerformanceDto(EdMaterialAndTaskPerformanceProjection projection) {
+        TaskPerformanceDto taskDto = new TaskPerformanceDto();
+        taskDto.setId(projection.getTaskPerformanceDtoId());
+        taskDto.setEdMaterialId(projection.getTaskPerformanceDtoEdMaterialId());
+        taskDto.setStudentId(projection.getTaskPerformanceDtoStudentId());
+        taskDto.setDateOfCompletion(projection.getTaskPerformanceDtoDateOfCompletion());
+        taskDto.setAnswer(projection.getTaskPerformanceDtoAnswer());
+        taskDto.setGrade(projection.getTaskPerformanceDtoGrade());
+        return taskDto;
     }
 
     public void updateTaskPerformanceGrade(int grade, int id) {
@@ -100,8 +127,9 @@ public class TeacherService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Material was not found!")));
     }
 
-    public List<ApplicationDto> getAllApplications() {
-        return applicationMapper.toDtoList(applicationRepository.findAll());
+    public List<ApplicationDto> getAllApplications(Principal principal) {
+        int userId = userRepository.findUserByUsername(principal.getName()).get().getId();
+        return applicationMapper.toDtoList(applicationRepository.findAllApplicationsByTeacherId(userId));
     }
 
     public ApplicationDto getApplication(int id) {
@@ -111,7 +139,7 @@ public class TeacherService {
 
 
     public List<ProfileDto> getAllStudents() {
-        return userRepository.finAllStudents();
+        return userMapper.toProfileDtoList(userRepository.findAllStudents());
     }
 
     public ProfileDto getMyProfile(Principal principal) {

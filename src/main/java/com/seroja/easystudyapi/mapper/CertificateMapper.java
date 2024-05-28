@@ -12,8 +12,12 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface CertificateMapper {
 
+    @Mapping(source = "application.id", target = "applicationId")
+    @Mapping(source = "application.student.id", target = "studentId")
     CertificateDto toDto(Certificate certificate);
 
+    @Mapping(source = "applicationId", target = "application.id")
+    @Mapping(source = "studentId", target = "application.student.id")
     Certificate toEntity(CertificateDto certificateDto);
 
     List<CertificateDto> toDtoList(List<Certificate> certificates);

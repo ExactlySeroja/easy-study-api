@@ -39,11 +39,11 @@ public class StudentService {
     }
 
     public List<CourseDto> findCoursesByName(String name) {
-        return courseMapper.toDtoList(courseRepository.findByName(name));
+        return courseMapper.toDtoList(courseRepository.findCoursesByCourseNameLike("%" + name + "%"));
     }
 
     public List<CourseDto> findCoursesByCategory(int id) {
-        return courseMapper.toDtoList(courseRepository.findByCategoryId(id));
+        return courseMapper.toDtoList(courseRepository.findCoursesByCategoryCategoryId(id));
     }
 
     public List<CourseDto> sortCoursesByPrice(String order) {
@@ -78,7 +78,7 @@ public class StudentService {
 
     public List<CertificateDto> getAllMyCertificates(Principal principal) {
         int userId = userRepository.findUserByUsername(principal.getName()).get().getId();
-        List<Certificate> certificates = certificateRepository.findCertificateByStudentId(userId);
+        List<Certificate> certificates = certificateRepository.findCertificateByApplicationStudentId(userId);
         return certificateMapper.toDtoList(certificates);
     }
 

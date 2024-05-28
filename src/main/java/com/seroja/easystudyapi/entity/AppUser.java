@@ -51,7 +51,7 @@ public class AppUser {
     private String email;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "username"))
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "username", referencedColumnName = "username"))
     @Column(name = "role")
     private Set<String> role;
 

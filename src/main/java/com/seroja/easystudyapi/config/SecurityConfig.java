@@ -31,7 +31,7 @@ public class SecurityConfig {
                         .requestMatchers(Routes.SWAGGER_ENDPOINTS).permitAll()
                         .requestMatchers("/v3/api-docs", "/swagger-ui/**", "/swagger-ui.html", "/webjars/**").permitAll()
 
-                        .requestMatchers(Routes.TEACHER + "/**",
+                        .requestMatchers(Routes.STUDENT + "/**",
                                 Routes.STUDENT_GET_ALL_MY_COURSES,
                                 Routes.STUDENT_FILTER_COURSE_BY_NAME,
                                 Routes.STUDENT_FILTER_COURSE_BY_CATEGORY,

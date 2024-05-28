@@ -20,6 +20,8 @@ public interface UserMapper {
 
     ProfileDto toProfileDto(AppUser appUser);
 
+    List<ProfileDto> toProfileDtoList(List<AppUser> appUserList);
+
     List<UserDto> toDtoList(List<AppUser> appUsers);
 
     List<AppUser> toEntityList(List<UserDto> userDtos);
