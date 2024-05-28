@@ -18,7 +18,9 @@ public class Routes {
     public static final String GET_ALL_THEMES_BY_COURSE = API_URL + "/courses/{id}/themes";
     public static final String GET_MATERIALS_BY_THEME = API_URL + "/themes/{id}/materials";
     public static final String GET_ALL_CATEGORIES = API_URL + "/categories";
-
+    public static final String CHECK_EXISTING_USER_EMAIL = API_URL + "/check-email";
+    public static final String CHECK_EXISTING_USER_PHONE = API_URL + "/check-phone";
+    public static final String CHECK_EXISTING_USER_USERNAME = API_URL + "/check-username";
 
     /**
      * Teacher routes

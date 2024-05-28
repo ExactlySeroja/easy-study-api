@@ -107,4 +107,16 @@ public class UserService implements UserDetailsService {
         return repository.findUserByUsername(username);
     }
 
+    public boolean checkUserEmail(String email){
+        return repository.existsByEmail(email);
+    }
+
+    public boolean checkUserPhoneNumber(String phoneNumber){
+        return repository.existsByPhoneNumber(phoneNumber);
+    }
+
+    public boolean checkUserUsername(String username){
+        return repository.existsByUsername(username);
+    }
+
 }

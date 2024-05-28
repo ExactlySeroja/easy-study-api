@@ -15,6 +15,11 @@ public interface UserRepository extends JpaRepository<AppUser, Integer> {
 
     boolean existsByUsername(String username);
 
+    boolean existsByEmail(String email);
+
+    boolean existsByPhoneNumber(String phone);
+
+
     @Query(value = "SELECT u.* FROM app_user u JOIN user_roles ur ON u.username = ur.username WHERE ur.role = 'STUDENT'", nativeQuery = true)
     List<AppUser> findAllStudents();
 }

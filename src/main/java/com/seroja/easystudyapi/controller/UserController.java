@@ -63,4 +63,19 @@ public class UserController {
         return authService.refreshAuthToken(String.valueOf(oldToken));
     }
 
+    @GetMapping(value = Routes.CHECK_EXISTING_USER_EMAIL)
+    public boolean checkUserEmail(@RequestBody String email) {
+        return userService.checkUserEmail(email);
+    }
+
+    @GetMapping(value = Routes.CHECK_EXISTING_USER_PHONE)
+    public boolean checkUserPhoneNumber(@RequestBody String phoneNumber) {
+        return userService.checkUserPhoneNumber(phoneNumber);
+    }
+
+    @GetMapping(value = Routes.CHECK_EXISTING_USER_USERNAME)
+    public boolean checkUserUsername(@RequestBody String username) {
+        return userService.checkUserUsername(username);
+    }
+
 }
