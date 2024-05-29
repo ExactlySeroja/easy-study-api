@@ -36,10 +36,6 @@ public class SecurityConfig {
 
                         .requestMatchers(Routes.STUDENT + "/**",
                                 Routes.STUDENT_GET_ALL_MY_COURSES,
-                                Routes.STUDENT_FILTER_COURSE_BY_NAME,
-                                Routes.STUDENT_FILTER_COURSE_BY_CATEGORY,
-                                Routes.STUDENT_FILTER_COURSE_BY_PRICE,
-                                Routes.STUDENT_FILTER_COURSE_BY_START_DATE,
                                 Routes.STUDENT_GET_ALL_MY_APPLICATIONS,
                                 Routes.STUDENT_GET_ALL_MY_CERTIFICATES,
                                 Routes.STUDENT_GET_MATERIAL,

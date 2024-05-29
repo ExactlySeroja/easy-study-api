@@ -6,11 +6,14 @@ import com.seroja.easystudyapi.dto.ThemeDto;
 import com.seroja.easystudyapi.dto.UserDto;
 import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
 import com.seroja.easystudyapi.entity.AppUser;
+import com.seroja.easystudyapi.entity.Course;
 import com.seroja.easystudyapi.entity.EducationalMaterial;
 import com.seroja.easystudyapi.mapper.*;
 import com.seroja.easystudyapi.repository.*;
+import com.seroja.easystudyapi.specification.CourseSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
@@ -19,10 +22,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -31,6 +32,8 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository repository;
     private final UserMapper mapper;
+
+    private final CourseSpecification courseSpecification;
 
     private final BCryptPasswordEncoder passwordEncoder;
 
@@ -51,16 +54,16 @@ public class UserService implements UserDetailsService {
         return mapper.toDto(appUser);
     }
 
-    public void update(UserDto dto, int id) {
-        AppUser existingEntity = repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
-        AppUser updatedEntity = mapper.toEntity(dto);
-        mapper.update(existingEntity, updatedEntity);
-        repository.save(existingEntity);
-    }
+    public List<CourseDto> filterCourses(String courseName, String categoryName, String priceOrder, String dateOrder) {
+        if (courseName == null && categoryName == null && priceOrder == null && dateOrder == null) {
+            return courseMapper.toDtoList(courseRepository.findAll());
+        }
+        Specification<Course> spec = Specification.where(courseSpecification.hasName(courseName))
+                .and(courseSpecification.hasCategoryName(categoryName))
+                .and(courseSpecification.orderByPrice(priceOrder))
+                .and(courseSpecification.orderByDate(dateOrder));
 
-    public List<CourseDto> getAllCourses() {
-        return courseMapper.toDtoList(courseRepository.findAll());
+        return courseMapper.toDtoList(courseRepository.findAll(spec));
     }
 
     public List<ThemeDto> getAllThemesByCourseId(int courseId) {
@@ -103,25 +106,22 @@ public class UserService implements UserDetailsService {
         return new ResponseEntity<>("Successfully registration!", HttpStatus.OK);
     }
 
-    public Optional<AppUser> findAppUserByUsername(String username) {
-        return repository.findUserByUsername(username);
-    }
-
-    public ResponseEntity<?> checkUserEmail(String email){
-        if (repository.existsByEmail(email)){
+    public ResponseEntity<?> checkUserEmail(String email) {
+        if (repository.existsByEmail(email)) {
             return new ResponseEntity<>("User with email " + email + " already exists", HttpStatus.BAD_REQUEST);
-        } return ResponseEntity.ok(HttpStatus.OK);
+        }
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    public ResponseEntity<?> checkUserPhoneNumber(String phoneNumber){
-        if (repository.existsByPhoneNumber(phoneNumber)){
+    public ResponseEntity<?> checkUserPhoneNumber(String phoneNumber) {
+        if (repository.existsByPhoneNumber(phoneNumber)) {
             return new ResponseEntity<>("User with phone number " + phoneNumber + " already exists", HttpStatus.BAD_REQUEST);
         } else return ResponseEntity.ok(HttpStatus.OK);
 
     }
 
-    public ResponseEntity<?> checkUserUsername(String username){
-        if(repository.existsByUsername(username)){
+    public ResponseEntity<?> checkUserUsername(String username) {
+        if (repository.existsByUsername(username)) {
             return new ResponseEntity<>("User with username " + username + " already exists", HttpStatus.BAD_REQUEST);
         } else return ResponseEntity.ok(HttpStatus.OK);
     }

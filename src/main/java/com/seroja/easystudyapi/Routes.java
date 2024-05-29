@@ -57,11 +57,6 @@ public class Routes {
     public static final String STUDENT = API_URL + "/student";
 
     public static final String STUDENT_GET_ALL_MY_COURSES = STUDENT + "/my-courses";
-
-    public static final String STUDENT_FILTER_COURSE_BY_NAME = STUDENT + "/courses/like/{courseName}";
-    public static final String STUDENT_FILTER_COURSE_BY_CATEGORY = STUDENT + "/courses/{categoryId}";
-    public static final String STUDENT_FILTER_COURSE_BY_PRICE = STUDENT + "/courses/filter-by-price/{order}";
-    public static final String STUDENT_FILTER_COURSE_BY_START_DATE = STUDENT + "/courses/filter-by-start-date/{order}";
     public static final String STUDENT_GET_ALL_MY_APPLICATIONS = STUDENT + "/applications";
     public static final String STUDENT_GET_ALL_MY_CERTIFICATES = STUDENT + "/certificates";
     public static final String STUDENT_GET_MATERIAL = STUDENT + "/materials/{materialId}";

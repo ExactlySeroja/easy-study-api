@@ -23,26 +23,6 @@ public class StudentController {
         return studentService.getAllMyCourses(principal);
     }
 
-    @GetMapping(value = Routes.STUDENT_FILTER_COURSE_BY_NAME)
-    public List<CourseDto> findCoursesByName(@PathVariable String courseName) {
-        return studentService.findCoursesByName(courseName);
-    }
-
-    @GetMapping(value = Routes.STUDENT_FILTER_COURSE_BY_CATEGORY)
-    public List<CourseDto> findCourseByCategory(@PathVariable int categoryId) {
-        return studentService.findCoursesByCategory(categoryId);
-    }
-
-    @GetMapping(value = Routes.STUDENT_FILTER_COURSE_BY_PRICE)
-    public List<CourseDto> filterCoursesByPrice(@PathVariable String order) {
-        return studentService.sortCoursesByPrice(order);
-    }
-
-    @GetMapping(value = Routes.STUDENT_FILTER_COURSE_BY_START_DATE)
-    public List<CourseDto> sortCoursesByStartDate(@PathVariable String order) {
-        return studentService.sortByCourseStartDate(order);
-    }
-
     @GetMapping(value = Routes.STUDENT_GET_ALL_MY_APPLICATIONS)
     public List<ApplicationDto> getAllMyApplications(Principal principal) {
         return studentService.getAllMyApplications(principal);

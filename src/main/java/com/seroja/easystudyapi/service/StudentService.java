@@ -8,14 +8,12 @@ import com.seroja.easystudyapi.mapper.*;
 import com.seroja.easystudyapi.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -40,38 +38,6 @@ public class StudentService {
         return courseMapper.toDtoList(courses);
     }
 
-    public List<CourseDto> findCoursesByName(String name) {
-        return courseMapper.toDtoList(courseRepository.findCoursesByCourseNameLike("%" + name + "%"));
-    }
-
-    public List<CourseDto> findCoursesByCategory(int id) {
-        return courseMapper.toDtoList(courseRepository.findCoursesByCategoryCategoryId(id));
-    }
-
-    public List<CourseDto> sortCoursesByPrice(String order) {
-        List<Course> courses = courseRepository.findAll();
-        if (order.equals("ascending")) {
-            courses.sort(Comparator.comparingInt(Course::getCoursePrice));
-            return courseMapper.toDtoList(courses);
-        } else if (order.equals("descending")) {
-            courses.sort(Comparator.comparingInt(Course::getCoursePrice).reversed());
-            return courseMapper.toDtoList(courses);
-        }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong order");
-    }
-
-    public List<CourseDto> sortByCourseStartDate(String order) {
-        List<Course> courses = courseRepository.findAll();
-        if (order.equals("ascending")) {
-            courses.sort(Comparator.comparing(Course::getCourseStartDate));
-            return courseMapper.toDtoList(courses);
-        } else if (order.equals("descending")) {
-            courses.sort(Comparator.comparing(Course::getCourseStartDate).reversed());
-            return courseMapper.toDtoList(courses);
-        }
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Wrong order");
-    }
-
     public List<ApplicationDto> getAllMyApplications(Principal principal) {
         int userId = userRepository.findUserByUsername(principal.getName()).get().getId();
         List<Application> applications = applicationRepository.findAllByStudentId(userId);
@@ -88,6 +54,7 @@ public class StudentService {
         return educationalMaterialMapper.toDto(educationalMaterialRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Material was not found!")));
     }
+
     @Transactional
     public ApplicationDto createApplication(ApplicationRequestDto applicationRequestDto, Principal principal) {
         ApplicationDto applicationDto = new ApplicationDto();
@@ -96,7 +63,7 @@ public class StudentService {
         applicationDto.setCourseId(applicationRequestDto.getCourseId());
         applicationDto.setDateOfCreation(LocalDate.now());
         applicationDto.setApplicationStatus(false);
-        return applicationMapper.toDto( applicationRepository.save(applicationMapper.toEntity(applicationDto)));
+        return applicationMapper.toDto(applicationRepository.save(applicationMapper.toEntity(applicationDto)));
     }
 
     public TaskPerformanceDto createTaskPerformance(TaskPerformanceDto taskPerformanceDto) {

@@ -24,28 +24,27 @@ public class UserController {
     private final UserService userService;
     private final AuthService authService;
 
-    //general
-    @GetMapping(value = Routes.GET_ALL_COURSES)
-    public List<CourseDto> getAllCourses() {
-        return userService.getAllCourses();
-    }
-
-    //general
     @GetMapping(value = Routes.GET_ALL_THEMES_BY_COURSE)
     public List<ThemeDto> getAllThemesByCourse(@PathVariable int id) {
         return userService.getAllThemesByCourseId(id);
     }
 
-    //general
     @GetMapping(value = Routes.GET_MATERIALS_BY_THEME)
     public List<EdMaterialAndTaskPerformanceQueryDto> getAllEducationalMaterialByTheme(@PathVariable int id) {
         return userService.getAllEducationalMaterialsByTheme(id);
     }
 
-    //general
     @GetMapping(value = Routes.GET_ALL_CATEGORIES)
     public List<CategoryDto> getAllCategories() {
         return userService.getAllCategories();
+    }
+
+    @GetMapping(value = Routes.GET_ALL_COURSES)
+    public List<CourseDto> findCoursesByName(@RequestParam(name = "name", required = false) String courseName,
+                                             @RequestParam(name = "categoryId", required = false) String categoryName,
+                                             @RequestParam(name = "priceOrder", required = false) String priceOrder,
+                                             @RequestParam(name = "dateOrder", required = false) String dateOrder) {
+        return userService.filterCourses(courseName, categoryName, priceOrder, dateOrder);
     }
 
     @PostMapping(value = Routes.LOGIN)
