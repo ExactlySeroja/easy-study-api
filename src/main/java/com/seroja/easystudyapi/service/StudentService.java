@@ -6,11 +6,16 @@ import com.seroja.easystudyapi.dto.query.GetCoursesRequestDto;
 import com.seroja.easystudyapi.entity.Application;
 import com.seroja.easystudyapi.entity.Certificate;
 import com.seroja.easystudyapi.entity.Course;
-import com.seroja.easystudyapi.mapper.*;
+import com.seroja.easystudyapi.mapper.ApplicationMapper;
+import com.seroja.easystudyapi.mapper.CertificateMapper;
+import com.seroja.easystudyapi.mapper.EducationalMaterialMapper;
+import com.seroja.easystudyapi.mapper.TaskPerformanceMapper;
 import com.seroja.easystudyapi.repository.*;
 import com.seroja.easystudyapi.specification.CourseSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
@@ -68,10 +73,10 @@ public class StudentService {
         return taskPerformanceMapper.toDto(taskPerformanceRepository.save(taskPerformanceMapper.toEntity(taskPerformanceDto)));
     }
 
-    public List<GetCoursesRequestDto> filterCourses(String courseName, Integer categoryId, Integer minPrice,
-                                                    Integer maxPrice, LocalDate minDate, LocalDate maxDate,
-                                                    String priceSort, String startDateSort, String endDateSort, Principal principal) {
-
+    public List<GetCoursesRequestDto> filterCourses(
+            String courseName, Integer categoryId, Integer minPrice, Integer maxPrice, LocalDate minDate, LocalDate maxDate,
+            String priceSort, String startDateSort, String endDateSort, int limit, int offset, Principal principal) {
+        Pageable pageable = PageRequest.of(offset / limit, limit, courseSpecification.getSort(priceSort, startDateSort, endDateSort));
         Specification<Course> spec = Specification.where(courseSpecification.hasStudentId(getId(principal)))
                 .and(courseSpecification.hasName(courseName))
                 .and(courseSpecification.hasCategoryId(categoryId))
@@ -80,9 +85,8 @@ public class StudentService {
                 .and(courseSpecification.hasMinDate(minDate))
                 .and(courseSpecification.hasMaxDate(maxDate));
 
-        return userService.getGetCoursesRequestDtos(priceSort, startDateSort, endDateSort, principal, spec);
+        return userService.getGetCoursesRequestDtos(priceSort, startDateSort, endDateSort, principal, spec, pageable);
     }
-
 
     private Integer getId(Principal principal) {
         return userRepository.findUserByUsername(principal.getName()).get().getId();

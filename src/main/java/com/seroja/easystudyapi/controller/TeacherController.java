@@ -26,32 +26,58 @@ public class TeacherController {
     private final TeacherService teacherService;
 
     @GetMapping(value = Routes.TEACHER_GET_ALL_MY_COURSES)
-    public List<GetCoursesRequestDto> getAllCourses(@RequestParam(name = "name", required = false) String courseName,
-                                                    @RequestParam(name = "categoryId", required = false) Integer categoryId,
-                                                    @RequestParam(name = "minPrice", required = false) Integer minPrice,
-                                                    @RequestParam(name = "maxPrice", required = false) Integer maxPrice,
-                                                    @RequestParam(name = "minDate", required = false) LocalDate minDate,
-                                                    @RequestParam(name = "maxDate", required = false) LocalDate maxDate,
-                                                    @RequestParam(name = "priceSort", required = false) String priceSort,
-                                                    @RequestParam(name = "startDateSort ", required = false) String startDateSort,
-                                                    @RequestParam(name = "endDateSort ", required = false) String endDateSort, Principal principal) {
-        return teacherService.filterCourses(courseName, categoryId, minPrice, maxPrice, minDate, maxDate, priceSort, startDateSort, endDateSort, principal);
+    public List<GetCoursesRequestDto> getAllCourses(
+            @RequestParam(name = "name", required = false) String courseName,
+            @RequestParam(name = "categoryId", required = false) Integer categoryId,
+            @RequestParam(name = "minPrice", required = false) Integer minPrice,
+            @RequestParam(name = "maxPrice", required = false) Integer maxPrice,
+            @RequestParam(name = "minDate", required = false) LocalDate minDate,
+            @RequestParam(name = "maxDate", required = false) LocalDate maxDate,
+            @RequestParam(name = "priceSort", required = false) String priceSort,
+            @RequestParam(name = "startDateSort", required = false) String startDateSort,
+            @RequestParam(name = "endDateSort", required = false) String endDateSort,
+            @RequestParam(name = "limit", defaultValue = "10") int limit,
+            @RequestParam(name = "offset", defaultValue = "0") int offset,
+            Principal principal) {
+        return teacherService.filterCourses(courseName, categoryId, minPrice, maxPrice, minDate, maxDate, priceSort, startDateSort, endDateSort, limit, offset, principal);
     }
 
-
     @PutMapping(value = Routes.TEACHER_DELETE_UPDATE_COURSE)
-    public ResponseEntity<?> update(@RequestBody @Valid CourseDto courseDto, @PathVariable Integer id) {
+    public ResponseEntity<?> updateCourse(@RequestBody @Valid CourseDto courseDto, @PathVariable Integer id) {
         teacherService.updateCourse(courseDto, id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+
     @DeleteMapping(value = Routes.TEACHER_DELETE_UPDATE_COURSE)
-    public void delete(@PathVariable Integer id) {
+    public void deleteCourse(@PathVariable Integer id) {
         teacherService.deleteCourse(id);
     }
 
+    @PutMapping(value = Routes.TEACHER_GET_THEME_BY_ID)
+    public ResponseEntity<?> updateTheme(@RequestBody @Valid ThemeDto themeDto, @PathVariable Integer id) {
+        teacherService.updateTheme(themeDto, id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = Routes.TEACHER_GET_THEME_BY_ID)
+    public void deleteTheme(@PathVariable Integer id) {
+        teacherService.deleteTheme(id);
+    }
+
+    @PutMapping(value = Routes.TEACHER_GET_MATERIAL_BY_ID)
+    public ResponseEntity<?> updateMaterial(@RequestBody @Valid EducationalMaterialDto educationalMaterialDto, @PathVariable Integer id) {
+        teacherService.updateEdMaterial(educationalMaterialDto, id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = Routes.TEACHER_GET_MATERIAL_BY_ID)
+    public void deleteMaterial(@PathVariable Integer id) {
+        teacherService.deleteEdMaterial(id);
+    }
+
     @PostMapping(value = Routes.TEACHER_CREATE_NEW_COURSE)
-    public ResponseEntity<?> createCourse(@RequestBody CourseDto courseDto) {
+    public ResponseEntity<?> createCourse(@RequestBody @Valid CourseDto courseDto) {
         try {
             return new ResponseEntity<>(teacherService.createCourse(courseDto), HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -60,7 +86,7 @@ public class TeacherController {
     }
 
     @PostMapping(value = Routes.TEACHER_CREATE_THEME)
-    public ResponseEntity<?> createTheme(@RequestBody ThemeDto themeDto) {
+    public ResponseEntity<?> createTheme(@RequestBody @Valid ThemeDto themeDto) {
         try {
             return new ResponseEntity<>(teacherService.createTheme(themeDto), HttpStatus.OK);
         } catch (NoSuchElementException e) {
@@ -106,7 +132,7 @@ public class TeacherController {
     }
 
     @PostMapping(value = Routes.TEACHER_CREATE_NEW_CERTIFICATE)
-    public ResponseEntity<?> createCertificate(@RequestBody CertificateDto certificateDto) {
+    public ResponseEntity<?> createCertificate(@RequestBody @Valid CertificateDto certificateDto) {
         try {
             return new ResponseEntity<>(teacherService.createCertificate(certificateDto), HttpStatus.OK);
         } catch (NoSuchElementException e) {

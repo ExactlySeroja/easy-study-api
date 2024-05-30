@@ -14,6 +14,8 @@ import com.seroja.easystudyapi.repository.*;
 import com.seroja.easystudyapi.specification.CourseSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -67,12 +69,15 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Course was not found!")));
     }
 
-    public List<GetCoursesRequestDto> filterCourses(String courseName, Integer categoryId, Integer minPrice,
-                                                    Integer maxPrice, LocalDate minDate, LocalDate maxDate,
-                                                    String priceSort, String startDateSort, String endDateSort, Principal principal) {
+    public List<GetCoursesRequestDto> filterCourses(
+            String courseName, Integer categoryId, Integer minPrice, Integer maxPrice, LocalDate minDate, LocalDate maxDate,
+            String priceSort, String startDateSort, String endDateSort, int limit, int offset, Principal principal) {
+
+        Pageable pageable = PageRequest.of(offset / limit, limit, courseSpecification.getSort(priceSort, startDateSort, endDateSort));
+
         if (courseName == null && categoryId == null && minPrice == null && maxPrice == null && minDate == null && maxDate == null
                 && priceSort == null && startDateSort == null && endDateSort == null) {
-            return courseMapper.toGetCoursesRequestDtoList(courseRepository.findAll());
+            return courseMapper.toGetCoursesRequestDtoList(courseRepository.findAll(pageable).getContent());
         }
 
         Specification<Course> spec = Specification.where(courseSpecification.hasName(courseName))
@@ -81,8 +86,8 @@ public class UserService implements UserDetailsService {
                 .and(courseSpecification.hasMaxPrice(maxPrice))
                 .and(courseSpecification.hasMinDate(minDate))
                 .and(courseSpecification.hasMaxDate(maxDate));
-        List<GetCoursesRequestDto> courses = courseMapper.toGetCoursesRequestDtoList(courseRepository.findAll(spec,
-                courseSpecification.getSort(priceSort, startDateSort, endDateSort)));
+
+        List<GetCoursesRequestDto> courses = courseMapper.toGetCoursesRequestDtoList(courseRepository.findAll(spec, pageable).getContent());
 
         if (repository.findUserByUsername(principal.getName()).get().getRole().equals(Set.of("STUDENT"))) {
             for (GetCoursesRequestDto course : courses) {
@@ -99,9 +104,9 @@ public class UserService implements UserDetailsService {
         return repository.findUserByUsername(principal.getName()).get().getId();
     }
 
-    public List<GetCoursesRequestDto> getGetCoursesRequestDtos(String priceSort, String startDateSort, String endDateSort, Principal principal, Specification<Course> spec) {
+    public List<GetCoursesRequestDto> getGetCoursesRequestDtos(String priceSort, String startDateSort, String endDateSort, Principal principal, Specification<Course> spec, Pageable pageable) {
         List<GetCoursesRequestDto> courses = courseMapper.toGetCoursesRequestDtoList(courseRepository.findByAppUserId(spec,
-                courseSpecification.getSort(priceSort, startDateSort, endDateSort)));
+                courseSpecification.getSort(priceSort, startDateSort, endDateSort), pageable));
 
         if (repository.findUserByUsername(principal.getName()).get().getRole().equals(Set.of("STUDENT"))) {
             for (GetCoursesRequestDto course : courses) {
