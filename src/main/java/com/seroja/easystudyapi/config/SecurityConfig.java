@@ -39,6 +39,7 @@ public class SecurityConfig {
                                 Routes.STUDENT_GET_ALL_MY_APPLICATIONS,
                                 Routes.STUDENT_GET_ALL_MY_CERTIFICATES,
                                 Routes.STUDENT_GET_MATERIAL,
+                                Routes.STUDENT_GET_MY_TASK_PERFORMANCE_BY_MATERIAL,
                                 Routes.STUDENT_CREATE_APPLICATION,
                                 Routes.STUDENT_ADD_TASK_PERFORMANCE).hasRole("STUDENT")
 

@@ -62,7 +62,7 @@ public class Routes {
     public static final String STUDENT_GET_ALL_MY_CERTIFICATES = STUDENT + "/certificates";
     public static final String STUDENT_GET_MATERIAL = STUDENT + "/materials/{materialId}";
     public static final String STUDENT_CREATE_APPLICATION = STUDENT + "/application";
-
+    public static final String STUDENT_GET_MY_TASK_PERFORMANCE_BY_MATERIAL = STUDENT + "/materials/{materialId}/my-performance";
     public static final String STUDENT_ADD_TASK_PERFORMANCE = STUDENT + "/performance";
 
 

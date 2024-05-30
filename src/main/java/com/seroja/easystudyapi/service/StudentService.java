@@ -24,6 +24,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +57,11 @@ public class StudentService {
     public EducationalMaterialDto getEducationalMaterialById(int id) {
         return educationalMaterialMapper.toDto(educationalMaterialRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Material was not found!")));
+    }
+
+    public Optional<TaskPerformanceDto> getTaskPerformanceByMaterialId(Integer id, Principal principal) {
+        return Optional.ofNullable(taskPerformanceMapper.toDto(taskPerformanceRepository.findByEdMaterialIdAndDoneById(id, getId(principal))
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Performance was not found!"))));
     }
 
     @Transactional

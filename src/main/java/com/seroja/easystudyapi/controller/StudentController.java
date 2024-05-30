@@ -18,6 +18,7 @@ import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,6 +46,11 @@ public class StudentController {
     @GetMapping(value = Routes.STUDENT_GET_ALL_MY_APPLICATIONS)
     public List<ApplicationWithFullInfoDto> getAllMyApplications(Principal principal) {
         return studentService.getAllMyApplications(principal);
+    }
+
+    @GetMapping(value = Routes.STUDENT_GET_MY_TASK_PERFORMANCE_BY_MATERIAL)
+    public Optional<TaskPerformanceDto> getTaskPerformanceByMaterial(@PathVariable Integer materialId, Principal principal) {
+        return studentService.getTaskPerformanceByMaterialId(materialId, principal);
     }
 
     @GetMapping(value = Routes.STUDENT_GET_ALL_MY_CERTIFICATES)
