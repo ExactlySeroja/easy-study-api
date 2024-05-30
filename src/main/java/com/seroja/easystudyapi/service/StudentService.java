@@ -1,13 +1,17 @@
 package com.seroja.easystudyapi.service;
 
 import com.seroja.easystudyapi.dto.*;
+import com.seroja.easystudyapi.dto.query.ApplicationWithFullInfoDto;
+import com.seroja.easystudyapi.dto.query.GetCoursesRequestDto;
 import com.seroja.easystudyapi.entity.Application;
 import com.seroja.easystudyapi.entity.Certificate;
 import com.seroja.easystudyapi.entity.Course;
 import com.seroja.easystudyapi.mapper.*;
 import com.seroja.easystudyapi.repository.*;
+import com.seroja.easystudyapi.specification.CourseSpecification;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,8 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudentService {
 
-    private final CourseRepository courseRepository;
-    private final CourseMapper courseMapper;
+    private final CourseSpecification courseSpecification;
     private final ApplicationRepository applicationRepository;
     private final ApplicationMapper applicationMapper;
     private final EducationalMaterialRepository educationalMaterialRepository;
@@ -31,21 +34,16 @@ public class StudentService {
     private final UserRepository userRepository;
     private final TaskPerformanceRepository taskPerformanceRepository;
     private final TaskPerformanceMapper taskPerformanceMapper;
+    private final UserService userService;
 
-    public List<CourseDto> getAllMyCourses(Principal principal) {
-        int userId = userRepository.findUserByUsername(principal.getName()).get().getId();
-        List<Course> courses = courseRepository.findByUserId(userId);
-        return courseMapper.toDtoList(courses);
-    }
-
-    public List<ApplicationDto> getAllMyApplications(Principal principal) {
-        int userId = userRepository.findUserByUsername(principal.getName()).get().getId();
+    public List<ApplicationWithFullInfoDto> getAllMyApplications(Principal principal) {
+        int userId = getId(principal);
         List<Application> applications = applicationRepository.findAllByStudentId(userId);
-        return applicationMapper.toDtoList(applications);
+        return applicationMapper.toWithFullInfoDtoList(applications);
     }
 
     public List<CertificateDto> getAllMyCertificates(Principal principal) {
-        int userId = userRepository.findUserByUsername(principal.getName()).get().getId();
+        int userId = getId(principal);
         List<Certificate> certificates = certificateRepository.findCertificateByApplicationStudentId(userId);
         return certificateMapper.toDtoList(certificates);
     }
@@ -56,11 +54,11 @@ public class StudentService {
     }
 
     @Transactional
-    public ApplicationDto createApplication(ApplicationRequestDto applicationRequestDto, Principal principal) {
+    public ApplicationDto createApplication(CreateApplicationRequestDto createApplicationRequestDto, Principal principal) {
         ApplicationDto applicationDto = new ApplicationDto();
-        int userId = userRepository.findUserByUsername(principal.getName()).get().getId();
+        int userId = getId(principal);
         applicationDto.setStudentId(userId);
-        applicationDto.setCourseId(applicationRequestDto.getCourseId());
+        applicationDto.setCourseId(createApplicationRequestDto.getCourseId());
         applicationDto.setDateOfCreation(LocalDate.now());
         applicationDto.setApplicationStatus(false);
         return applicationMapper.toDto(applicationRepository.save(applicationMapper.toEntity(applicationDto)));
@@ -70,4 +68,23 @@ public class StudentService {
         return taskPerformanceMapper.toDto(taskPerformanceRepository.save(taskPerformanceMapper.toEntity(taskPerformanceDto)));
     }
 
+    public List<GetCoursesRequestDto> filterCourses(String courseName, Integer categoryId, Integer minPrice,
+                                                    Integer maxPrice, LocalDate minDate, LocalDate maxDate,
+                                                    String priceSort, String startDateSort, String endDateSort, Principal principal) {
+
+        Specification<Course> spec = Specification.where(courseSpecification.hasStudentId(getId(principal)))
+                .and(courseSpecification.hasName(courseName))
+                .and(courseSpecification.hasCategoryId(categoryId))
+                .and(courseSpecification.hasMinPrice(minPrice))
+                .and(courseSpecification.hasMaxPrice(maxPrice))
+                .and(courseSpecification.hasMinDate(minDate))
+                .and(courseSpecification.hasMaxDate(maxDate));
+
+        return userService.getGetCoursesRequestDtos(priceSort, startDateSort, endDateSort, principal, spec);
+    }
+
+
+    private Integer getId(Principal principal) {
+        return userRepository.findUserByUsername(principal.getName()).get().getId();
+    }
 }

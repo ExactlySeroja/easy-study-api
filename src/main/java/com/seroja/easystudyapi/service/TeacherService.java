@@ -1,21 +1,22 @@
 package com.seroja.easystudyapi.service;
 
 import com.seroja.easystudyapi.dto.*;
-import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceProjection;
-import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
-import com.seroja.easystudyapi.dto.query.ProfileDto;
+import com.seroja.easystudyapi.dto.query.*;
 import com.seroja.easystudyapi.entity.Application;
 import com.seroja.easystudyapi.entity.Course;
 import com.seroja.easystudyapi.entity.TaskPerformance;
 import com.seroja.easystudyapi.mapper.*;
 import com.seroja.easystudyapi.repository.*;
+import com.seroja.easystudyapi.specification.CourseSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,9 +26,11 @@ public class TeacherService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final UserService userService;
 
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
+    private final CourseSpecification courseSpecification;
 
     private final ThemeRepository themeRepository;
     private final ThemeMapper themeMapper;
@@ -43,17 +46,25 @@ public class TeacherService {
     private final ApplicationRepository applicationRepository;
     private final ApplicationMapper applicationMapper;
 
-    public List<CourseDto> getAllMyCourses(Principal principal) {
-        int userId = userRepository.findUserByUsername(principal.getName()).get().getId();
-        List<Course> courses = courseRepository.findByUserId(userId);
-        return courseMapper.toDtoList(courses);
+    public List<GetCoursesRequestDto> filterCourses(String courseName, Integer categoryId, Integer minPrice,
+                                                    Integer maxPrice, LocalDate minDate, LocalDate maxDate,
+                                                    String priceSort, String startDateSort, String endDateSort, Principal principal) {
+
+        Specification<Course> spec = Specification.where(courseSpecification.hasTeacherId(getId(principal)))
+                .and(courseSpecification.hasName(courseName))
+                .and(courseSpecification.hasCategoryId(categoryId))
+                .and(courseSpecification.hasMinPrice(minPrice))
+                .and(courseSpecification.hasMaxPrice(maxPrice))
+                .and(courseSpecification.hasMinDate(minDate))
+                .and(courseSpecification.hasMaxDate(maxDate));
+
+        return userService.getGetCoursesRequestDtos(priceSort, startDateSort, endDateSort, principal, spec);
     }
 
-
-    public CourseDto getCourseById(int id) {
-        return courseMapper.toDto(courseRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Course was not found!")));
+    private Integer getId(Principal principal) {
+        return userRepository.findUserByUsername(principal.getName()).get().getId();
     }
+
 
     public CourseDto createCourse(CourseDto courseDto) {
         return courseMapper.toDto(courseRepository.save(courseMapper.toEntity(courseDto)));
@@ -112,10 +123,10 @@ public class TeacherService {
         taskPerformanceRepository.save(existingEntity);
     }
 
-    public void updateApplicationStatus(boolean status, int id) {
+    public void updateApplicationStatus(int id) {
         Application existingEntity = applicationRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
-        existingEntity.setApplicationStatus(status);
+        existingEntity.setApplicationStatus(true);
         applicationRepository.save(existingEntity);
     }
 
@@ -132,9 +143,8 @@ public class TeacherService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Material was not found!")));
     }
 
-    public List<ApplicationDto> getAllApplications(Principal principal) {
-        int userId = userRepository.findUserByUsername(principal.getName()).get().getId();
-        return applicationMapper.toDtoList(applicationRepository.findAllApplicationsByTeacherId(userId));
+    public List<ApplicationWithFullInfoDto> getAllApplications(Principal principal) {
+        return applicationMapper.toWithFullInfoDtoList(applicationRepository.findAllApplicationsByTeacherId(getId(principal)));
     }
 
     public ApplicationDto getApplication(int id) {
@@ -148,6 +158,22 @@ public class TeacherService {
 
     public ProfileDto getMyProfile(Principal principal) {
         return userMapper.toProfileDto(userRepository.findUserByUsername(principal.getName()).get());
+    }
+
+    private Course get(int id) {
+        return courseRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Course was not found!"));
+    }
+
+    public void updateCourse(CourseDto newCourseDto, int id) {
+        Course exsistCourse = get(id);
+        Course update = courseMapper.toEntity(newCourseDto);
+        courseMapper.update(exsistCourse, update);
+        courseRepository.save(exsistCourse);
+    }
+
+    public void deleteCourse(int id) {
+        courseRepository.deleteById(id);
     }
 
 }

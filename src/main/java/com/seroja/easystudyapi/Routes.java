@@ -16,6 +16,7 @@ public class Routes {
      */
     public static final String GET_ALL_COURSES = API_URL + "/courses";
     public static final String GET_ALL_THEMES_BY_COURSE = API_URL + "/courses/{id}/themes";
+    public static final String GET_COURSE_BY_ID = API_URL + "/courses/{id}";
     public static final String GET_MATERIALS_BY_THEME = API_URL + "/themes/{id}/materials";
     public static final String GET_ALL_CATEGORIES = API_URL + "/categories";
     public static final String CHECK_EXISTING_USER_EMAIL = API_URL + "/check-email";
@@ -28,8 +29,8 @@ public class Routes {
     public static final String TEACHER = API_URL + "/teacher";
 
     public static final String TEACHER_GET_ALL_MY_COURSES = TEACHER + "/my-courses";
-    public static final String TEACHER_GET_COURSE_BY_ID = TEACHER + "/courses/{id}";
     public static final String TEACHER_CREATE_NEW_COURSE = TEACHER + "/courses";
+    public static final String TEACHER_DELETE_UPDATE_COURSE = TEACHER + "/courses/{id}";
 
     public static final String TEACHER_CREATE_THEME = TEACHER + "/theme";
     public static final String TEACHER_GET_THEME_BY_ID = TEACHER + "/themes/{id}";

@@ -20,4 +20,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Intege
             "WHERE t.id = :teacherId", nativeQuery = true)
     List<Application> findAllApplicationsByTeacherId(@Param("teacherId") int teacherId);
 
+    Application findByStudentIdAndCourseId(int studentId, int courseId);
+
 }

@@ -2,6 +2,7 @@ package com.seroja.easystudyapi.mapper;
 
 
 import com.seroja.easystudyapi.dto.CourseDto;
+import com.seroja.easystudyapi.dto.query.GetCoursesRequestDto;
 import com.seroja.easystudyapi.entity.Course;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,6 +20,10 @@ public interface CourseMapper {
     @Mapping(source = "categoryId", target = "category.categoryId")
     @Mapping(source = "teacherId", target = "teacher.id")
     Course toEntity(CourseDto courseDto);
+
+    GetCoursesRequestDto toGetCoursesRequestDto(Course course);
+
+    List<GetCoursesRequestDto> toGetCoursesRequestDtoList(List<Course> courses);
 
     List<CourseDto> toDtoList(List<Course> courseList);
 

@@ -3,15 +3,19 @@ package com.seroja.easystudyapi.controller;
 
 import com.seroja.easystudyapi.Routes;
 import com.seroja.easystudyapi.dto.*;
+import com.seroja.easystudyapi.dto.query.ApplicationWithFullInfoDto;
 import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
+import com.seroja.easystudyapi.dto.query.GetCoursesRequestDto;
 import com.seroja.easystudyapi.dto.query.ProfileDto;
 import com.seroja.easystudyapi.service.TeacherService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -22,13 +26,28 @@ public class TeacherController {
     private final TeacherService teacherService;
 
     @GetMapping(value = Routes.TEACHER_GET_ALL_MY_COURSES)
-    public List<CourseDto> getAllMyCourses(Principal principal) {
-        return teacherService.getAllMyCourses(principal);
+    public List<GetCoursesRequestDto> getAllCourses(@RequestParam(name = "name", required = false) String courseName,
+                                                    @RequestParam(name = "categoryId", required = false) Integer categoryId,
+                                                    @RequestParam(name = "minPrice", required = false) Integer minPrice,
+                                                    @RequestParam(name = "maxPrice", required = false) Integer maxPrice,
+                                                    @RequestParam(name = "minDate", required = false) LocalDate minDate,
+                                                    @RequestParam(name = "maxDate", required = false) LocalDate maxDate,
+                                                    @RequestParam(name = "priceSort", required = false) String priceSort,
+                                                    @RequestParam(name = "startDateSort ", required = false) String startDateSort,
+                                                    @RequestParam(name = "endDateSort ", required = false) String endDateSort, Principal principal) {
+        return teacherService.filterCourses(courseName, categoryId, minPrice, maxPrice, minDate, maxDate, priceSort, startDateSort, endDateSort, principal);
     }
 
-    @GetMapping(value = Routes.TEACHER_GET_COURSE_BY_ID)
-    public CourseDto getCourseById(@PathVariable int id) {
-        return teacherService.getCourseById(id);
+
+    @PutMapping(value = Routes.TEACHER_DELETE_UPDATE_COURSE)
+    public ResponseEntity<?> update(@RequestBody @Valid CourseDto courseDto, @PathVariable Integer id) {
+        teacherService.updateCourse(courseDto, id);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @DeleteMapping(value = Routes.TEACHER_DELETE_UPDATE_COURSE)
+    public void delete(@PathVariable Integer id) {
+        teacherService.deleteCourse(id);
     }
 
     @PostMapping(value = Routes.TEACHER_CREATE_NEW_COURSE)
@@ -81,8 +100,8 @@ public class TeacherController {
     }
 
     @PutMapping(value = Routes.TEACHER_GET_APPLICATION_BY_ID)
-    public ResponseEntity<?> updateApplicationStatus(@RequestBody boolean status, @PathVariable int id) {
-        teacherService.updateApplicationStatus(status, id);
+    public ResponseEntity<?> updateApplicationStatus(@PathVariable int id) {
+        teacherService.updateApplicationStatus(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -106,7 +125,7 @@ public class TeacherController {
     }
 
     @GetMapping(value = Routes.TEACHER_GET_ALL_APPLICATIONS)
-    public List<ApplicationDto> getAllApplications(Principal principal) {
+    public List<ApplicationWithFullInfoDto> getAllApplications(Principal principal) {
         return teacherService.getAllApplications(principal);
     }
 

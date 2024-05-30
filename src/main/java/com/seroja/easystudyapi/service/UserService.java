@@ -5,6 +5,7 @@ import com.seroja.easystudyapi.dto.CourseDto;
 import com.seroja.easystudyapi.dto.ThemeDto;
 import com.seroja.easystudyapi.dto.UserDto;
 import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
+import com.seroja.easystudyapi.dto.query.GetCoursesRequestDto;
 import com.seroja.easystudyapi.entity.AppUser;
 import com.seroja.easystudyapi.entity.Course;
 import com.seroja.easystudyapi.entity.EducationalMaterial;
@@ -15,6 +16,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +24,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -40,6 +45,9 @@ public class UserService implements UserDetailsService {
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
 
+    private final ApplicationRepository applicationRepository;
+    private final ApplicationMapper applicationMapper;
+
     private final ThemeRepository themeRepository;
     private final ThemeMapper themeMapper;
 
@@ -54,16 +62,55 @@ public class UserService implements UserDetailsService {
         return mapper.toDto(appUser);
     }
 
-    public List<CourseDto> filterCourses(String courseName, String categoryName, String priceOrder, String dateOrder) {
-        if (courseName == null && categoryName == null && priceOrder == null && dateOrder == null) {
-            return courseMapper.toDtoList(courseRepository.findAll());
-        }
-        Specification<Course> spec = Specification.where(courseSpecification.hasName(courseName))
-                .and(courseSpecification.hasCategoryName(categoryName))
-                .and(courseSpecification.orderByPrice(priceOrder))
-                .and(courseSpecification.orderByDate(dateOrder));
+    public CourseDto getCourseById(int id) {
+        return courseMapper.toDto(courseRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Course was not found!")));
+    }
 
-        return courseMapper.toDtoList(courseRepository.findAll(spec));
+    public List<GetCoursesRequestDto> filterCourses(String courseName, Integer categoryId, Integer minPrice,
+                                                    Integer maxPrice, LocalDate minDate, LocalDate maxDate,
+                                                    String priceSort, String startDateSort, String endDateSort, Principal principal) {
+        if (courseName == null && categoryId == null && minPrice == null && maxPrice == null && minDate == null && maxDate == null
+                && priceSort == null && startDateSort == null && endDateSort == null) {
+            return courseMapper.toGetCoursesRequestDtoList(courseRepository.findAll());
+        }
+
+        Specification<Course> spec = Specification.where(courseSpecification.hasName(courseName))
+                .and(courseSpecification.hasCategoryId(categoryId))
+                .and(courseSpecification.hasMinPrice(minPrice))
+                .and(courseSpecification.hasMaxPrice(maxPrice))
+                .and(courseSpecification.hasMinDate(minDate))
+                .and(courseSpecification.hasMaxDate(maxDate));
+        List<GetCoursesRequestDto> courses = courseMapper.toGetCoursesRequestDtoList(courseRepository.findAll(spec,
+                courseSpecification.getSort(priceSort, startDateSort, endDateSort)));
+
+        if (repository.findUserByUsername(principal.getName()).get().getRole().equals(Set.of("STUDENT"))) {
+            for (GetCoursesRequestDto course : courses) {
+                course.setApplication(applicationMapper
+                        .toDto(applicationRepository
+                                .findByStudentIdAndCourseId(getId(principal), course.getId())));
+            }
+        }
+
+        return courses;
+    }
+
+    private Integer getId(Principal principal) {
+        return repository.findUserByUsername(principal.getName()).get().getId();
+    }
+
+    public List<GetCoursesRequestDto> getGetCoursesRequestDtos(String priceSort, String startDateSort, String endDateSort, Principal principal, Specification<Course> spec) {
+        List<GetCoursesRequestDto> courses = courseMapper.toGetCoursesRequestDtoList(courseRepository.findByAppUserId(spec,
+                courseSpecification.getSort(priceSort, startDateSort, endDateSort)));
+
+        if (repository.findUserByUsername(principal.getName()).get().getRole().equals(Set.of("STUDENT"))) {
+            for (GetCoursesRequestDto course : courses) {
+                course.setApplication(applicationMapper
+                        .toDto(applicationRepository
+                                .findByStudentIdAndCourseId(getId(principal), course.getId())));
+            }
+        }
+        return courses;
     }
 
     public List<ThemeDto> getAllThemesByCourseId(int courseId) {

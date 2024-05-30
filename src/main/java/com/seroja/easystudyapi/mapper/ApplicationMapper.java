@@ -1,6 +1,7 @@
 package com.seroja.easystudyapi.mapper;
 
 import com.seroja.easystudyapi.dto.ApplicationDto;
+import com.seroja.easystudyapi.dto.query.ApplicationWithFullInfoDto;
 import com.seroja.easystudyapi.entity.Application;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -18,6 +19,10 @@ public interface ApplicationMapper {
     @Mapping(source = "studentId", target = "student.id")
     @Mapping(source = "courseId", target = "course.id")
     Application toEntity(ApplicationDto applicationDto);
+
+    ApplicationWithFullInfoDto toWithFullInfoDto(Application application);
+
+    List<ApplicationWithFullInfoDto> toWithFullInfoDtoList(List<Application> applications);
 
     List<ApplicationDto> toDtoList(List<Application> applications);
 

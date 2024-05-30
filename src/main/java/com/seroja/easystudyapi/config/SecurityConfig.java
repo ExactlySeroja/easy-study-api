@@ -44,8 +44,8 @@ public class SecurityConfig {
 
                         .requestMatchers(Routes.TEACHER + "/**",
                                 Routes.TEACHER_GET_ALL_MY_COURSES,
-                                Routes.TEACHER_GET_COURSE_BY_ID,
                                 Routes.TEACHER_CREATE_NEW_COURSE,
+                                Routes.TEACHER_DELETE_UPDATE_COURSE,
                                 Routes.TEACHER_CREATE_THEME,
                                 Routes.TEACHER_GET_THEME_BY_ID,
                                 Routes.TEACHER_GET_MATERIAL_BY_ID,
@@ -63,6 +63,7 @@ public class SecurityConfig {
 
                         .requestMatchers(Routes.GET_ALL_COURSES,
                                 Routes.GET_ALL_THEMES_BY_COURSE,
+                                Routes.GET_COURSE_BY_ID,
                                 Routes.GET_MATERIALS_BY_THEME,
                                 Routes.GET_ALL_CATEGORIES).hasAnyRole("TEACHER", "STUDENT")
 

@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 @Data
 public class ProfileDto {
-
+    @NotNull
     Integer id;
     @NotNull
     @Size(max = 250)

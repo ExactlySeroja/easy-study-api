@@ -1,6 +1,7 @@
 package com.seroja.easystudyapi.security;
 
 import com.seroja.easystudyapi.dto.UserDto;
+import com.seroja.easystudyapi.dto.jwt.JwtResponse;
 import com.seroja.easystudyapi.service.UserService;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ public class JwtTokenProvider {
     public String createToken(UserDetails userDetails, UserDto userDto) {
         Claims claims = Jwts.claims().setSubject(userDetails.getUsername());
         claims.put("id", userDto.getId());
+        claims.put("fullName", userDto.getFullName());
         claims.put("username", userDto.getUsername());
         claims.put("email", userDto.getEmail());
         claims.put("role", userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList());
@@ -59,7 +61,7 @@ public class JwtTokenProvider {
         }
     }
 
-    public String refreshToken(String token) {
+    public JwtResponse refreshToken(String token) {
         if (validateToken(token)) {
             Claims claims = getClaimsFromToken(token);
             Date now = new Date();
@@ -67,11 +69,14 @@ public class JwtTokenProvider {
 
             claims.setExpiration(newExpirationDate);
 
-            return Jwts.builder()
+            String newToken = Jwts.builder()
                     .setClaims(claims)
                     .setExpiration(newExpirationDate)
                     .signWith(SignatureAlgorithm.HS256, secret)
                     .compact();
+
+            return new JwtResponse(newToken);
+
         }
         throw new IllegalArgumentException("Invalid token");
     }
