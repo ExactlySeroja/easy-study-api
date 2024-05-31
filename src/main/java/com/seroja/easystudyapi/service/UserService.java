@@ -125,6 +125,10 @@ public class UserService implements UserDetailsService {
         return educationalMaterialMapper.toQueryDtoList(educationalMaterialRepository.findEducationalMaterialByThemeId(themeId));
     }
 
+    public ThemeDto getThemeById(int id) {
+        return themeMapper.toDto(themeRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404))));
+    }
 
     public List<CategoryDto> getAllCategories() {
         return categoryMapper.toDtoList(categoryRepository.findAll());

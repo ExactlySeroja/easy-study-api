@@ -79,10 +79,6 @@ public class TeacherService {
         return themeMapper.toDto(themeRepository.save(themeMapper.toEntity(themeDto)));
     }
 
-    public ThemeDto getThemeById(int id) {
-        return themeMapper.toDto(themeRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404))));
-    }
 
     public EducationalMaterialDto getEducationalMaterialById(int id) {
         return educationalMaterialMapper.toDto(educationalMaterialRepository.findById(id)
@@ -164,10 +160,6 @@ public class TeacherService {
     public ProfileDto getMyProfile(Principal principal) {
         return userMapper.toProfileDto(userRepository.findUserByUsername(principal.getName()).get());
     }
-
-    /*public List<ProfileDto> getAllStudentsByCourse(int courseId) {
-        return userMapper.toProfileDtoList(userRepository.findStudentsByCourseId(courseId));
-    }*/
 
     public List<StudentTaskPerformanceDto> getStudentTaskPerformances(Integer courseId) {
         List<StudentTaskPerformanceDto> students = userRepository.findStudentsByCourseId(courseId);

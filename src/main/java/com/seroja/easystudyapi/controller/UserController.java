@@ -38,6 +38,11 @@ public class UserController {
         return userService.getAllEducationalMaterialsWithTaskPerformance(id, principal);
     }
 
+    @GetMapping(value = Routes.GET_THEME_BY_ID)
+    public ThemeDto getTheme(@PathVariable int id) {
+        return userService.getThemeById(id);
+    }
+
     @GetMapping(value = Routes.GET_ALL_CATEGORIES)
     public List<CategoryDto> getAllCategories() {
         return userService.getAllCategories();

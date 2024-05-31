@@ -91,11 +91,6 @@ public class TeacherController {
         }
     }
 
-    @GetMapping(value = Routes.TEACHER_GET_THEME_BY_ID)
-    public ThemeDto getTheme(@PathVariable int id) {
-        return teacherService.getThemeById(id);
-    }
-
     @GetMapping(value = Routes.TEACHER_GET_STUDENTS_BY_COURSE_ID)
     public List<StudentTaskPerformanceDto> getStudentsByCourseId(@PathVariable Integer id) {
         return teacherService.getStudentTaskPerformances(id);

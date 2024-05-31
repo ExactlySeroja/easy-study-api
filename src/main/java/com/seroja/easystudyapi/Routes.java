@@ -22,6 +22,7 @@ public class Routes {
     public static final String CHECK_EXISTING_USER_EMAIL = API_URL + "/check-email";
     public static final String CHECK_EXISTING_USER_PHONE = API_URL + "/check-phone";
     public static final String CHECK_EXISTING_USER_USERNAME = API_URL + "/check-username";
+    public static final String GET_THEME_BY_ID = API_URL + "/themes/{id}";
 
     /**
      * Teacher routes
@@ -36,7 +37,7 @@ public class Routes {
     public static final String TEACHER_GET_PERFORMANCE_BY_STUDENT_ID = TEACHER + "/students/{id}/performance";
 
     public static final String TEACHER_CREATE_THEME = TEACHER + "/theme";
-    public static final String TEACHER_GET_THEME_BY_ID = TEACHER + "/themes/{id}";
+    public static final String TEACHER_GET_THEME_BY_ID = TEACHER + "/theme/{id}";
 
     public static final String TEACHER_GET_MATERIAL_BY_ID = TEACHER + "/materials/{id}";
     public static final String TEACHER_CREATE_NEW_MATERIAL = TEACHER + "/materials";
