@@ -122,7 +122,7 @@ public class TeacherController {
     }
 
     @PutMapping(value = Routes.TEACHER_UPDATE_PERFORMANCE)
-    public ResponseEntity<?> updateTaskPerformance(@RequestBody int grade, @PathVariable int id) {
+    public ResponseEntity<?> updateTaskPerformance(@RequestBody @Valid GradeDto grade, @PathVariable int id) {
         teacherService.updateTaskPerformanceGrade(grade, id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -117,10 +117,10 @@ public class TeacherService {
         return taskDto;
     }
 
-    public void updateTaskPerformanceGrade(int grade, int id) {
+    public void updateTaskPerformanceGrade(GradeDto grade, int id) {
         TaskPerformance existingEntity = taskPerformanceRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        existingEntity.setGrade(grade);
+        existingEntity.setGrade(grade.getGrade());
         taskPerformanceRepository.save(existingEntity);
     }
 
