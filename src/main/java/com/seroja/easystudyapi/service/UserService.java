@@ -4,11 +4,11 @@ import com.seroja.easystudyapi.dto.CategoryDto;
 import com.seroja.easystudyapi.dto.CourseDto;
 import com.seroja.easystudyapi.dto.ThemeDto;
 import com.seroja.easystudyapi.dto.UserDto;
-import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
+import com.seroja.easystudyapi.dto.query.EducationalMaterialWithTaskPerformanceDto;
 import com.seroja.easystudyapi.dto.query.GetCoursesRequestDto;
 import com.seroja.easystudyapi.entity.AppUser;
 import com.seroja.easystudyapi.entity.Course;
-import com.seroja.easystudyapi.entity.EducationalMaterial;
+import com.seroja.easystudyapi.exceptions.ResponseWithMessage;
 import com.seroja.easystudyapi.mapper.*;
 import com.seroja.easystudyapi.repository.*;
 import com.seroja.easystudyapi.specification.CourseSpecification;
@@ -66,7 +66,7 @@ public class UserService implements UserDetailsService {
 
     public CourseDto getCourseById(int id) {
         return courseMapper.toDto(courseRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Course was not found!")));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404))));
     }
 
     public List<GetCoursesRequestDto> filterCourses(
@@ -74,11 +74,6 @@ public class UserService implements UserDetailsService {
             String priceSort, String startDateSort, String endDateSort, int limit, int offset, Principal principal) {
 
         Pageable pageable = PageRequest.of(offset / limit, limit, courseSpecification.getSort(priceSort, startDateSort, endDateSort));
-
-        if (courseName == null && categoryId == null && minPrice == null && maxPrice == null && minDate == null && maxDate == null
-                && priceSort == null && startDateSort == null && endDateSort == null) {
-            return courseMapper.toGetCoursesRequestDtoList(courseRepository.findAll(pageable).getContent());
-        }
 
         Specification<Course> spec = Specification.where(courseSpecification.hasName(courseName))
                 .and(courseSpecification.hasCategoryId(categoryId))
@@ -122,10 +117,14 @@ public class UserService implements UserDetailsService {
         return themeMapper.toDtoList(themeRepository.findByCourseId(courseId));
     }
 
-    public List<EdMaterialAndTaskPerformanceQueryDto> getAllEducationalMaterialsByTheme(int id) {
-        List<EducationalMaterial> educationalMaterials = educationalMaterialRepository.findEducationalMaterialByThemeId(id);
-        return educationalMaterialMapper.toQueryDtoList(educationalMaterials);
+
+    public List<EducationalMaterialWithTaskPerformanceDto> getAllEducationalMaterialsWithTaskPerformance(int themeId, Principal principal) {
+        if (repository.findUserByUsername(principal.getName()).get().getRole().equals(Set.of("STUDENT"))) {
+            return educationalMaterialRepository.findAllMaterialsAndTaskPerformanceByThemeIdAndStudentId(themeId, getId(principal));
+        }
+        return educationalMaterialMapper.toQueryDtoList(educationalMaterialRepository.findEducationalMaterialByThemeId(themeId));
     }
+
 
     public List<CategoryDto> getAllCategories() {
         return categoryMapper.toDtoList(categoryRepository.findAll());
@@ -145,36 +144,36 @@ public class UserService implements UserDetailsService {
 
     public ResponseEntity<?> registerUser(UserDto dto) {
         if (repository.existsByUsername(dto.getUsername())) {
-            return new ResponseEntity<>("User with username " + dto.getUsername() + " already exists", HttpStatus.OK);
+            return new ResponseEntity<>(new ResponseWithMessage("User with username " + dto.getUsername() + " already exists"), HttpStatus.OK);
         }
         AppUser appUser = mapper.toEntity(dto);
         if (appUser.getRole().equals(Set.of("STUDENT"))) {
             appUser.setRole(Set.of("STUDENT"));
         } else if (appUser.getRole().equals(Set.of("TEACHER"))) {
             appUser.setRole(Set.of("TEACHER"));
-        } else return new ResponseEntity<>("Invalid role", HttpStatus.BAD_REQUEST);
+        } else return new ResponseEntity<>(new ResponseWithMessage("Invalid role"), HttpStatus.BAD_REQUEST);
         appUser.setPassword(passwordEncoder.encode(appUser.getPassword()));
         repository.save(appUser);
-        return new ResponseEntity<>("Successfully registration!", HttpStatus.OK);
+        return new ResponseEntity<>(new ResponseWithMessage("Successfully registration!"), HttpStatus.OK);
     }
 
     public ResponseEntity<?> checkUserEmail(String email) {
         if (repository.existsByEmail(email)) {
-            return new ResponseEntity<>("User with email " + email + " already exists", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseWithMessage("User with email " + email + " already exists"), HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     public ResponseEntity<?> checkUserPhoneNumber(String phoneNumber) {
         if (repository.existsByPhoneNumber(phoneNumber)) {
-            return new ResponseEntity<>("User with phone number " + phoneNumber + " already exists", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseWithMessage("User with phone number " + phoneNumber + " already exists"), HttpStatus.BAD_REQUEST);
         } else return ResponseEntity.ok(HttpStatus.OK);
 
     }
 
     public ResponseEntity<?> checkUserUsername(String username) {
         if (repository.existsByUsername(username)) {
-            return new ResponseEntity<>("User with username " + username + " already exists", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ResponseWithMessage("User with username " + username + " already exists"), HttpStatus.BAD_REQUEST);
         } else return ResponseEntity.ok(HttpStatus.OK);
     }
 

@@ -1,7 +1,7 @@
 package com.seroja.easystudyapi.mapper;
 
 import com.seroja.easystudyapi.dto.EducationalMaterialDto;
-import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
+import com.seroja.easystudyapi.dto.query.EducationalMaterialWithTaskPerformanceDto;
 import com.seroja.easystudyapi.entity.EducationalMaterial;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,14 +20,14 @@ public interface EducationalMaterialMapper {
     @Mapping(source = "themeId", target = "theme.id")
     EducationalMaterial toEntity(EducationalMaterialDto educationalMaterialDto);
 
-    @Mapping(source = "ed_material_name", target = "name")
-    @Mapping(source = "id", target = "id")
+    @Mapping(source = "ed_material_name", target = "materialName")
+    @Mapping(source = "id", target = "materialId")
     @Mapping(source = "dateOfUpload", target = "dateOfUpload")
-    EdMaterialAndTaskPerformanceQueryDto toQueryDto(EducationalMaterial educationalMaterial);
+    EducationalMaterialWithTaskPerformanceDto toQueryDto(EducationalMaterial educationalMaterial);
 
     List<EducationalMaterialDto> toDtoList(List<EducationalMaterial> educationalMaterialList);
 
-    List<EdMaterialAndTaskPerformanceQueryDto> toQueryDtoList(List<EducationalMaterial> educationalMaterialList);
+    List<EducationalMaterialWithTaskPerformanceDto> toQueryDtoList(List<EducationalMaterial> educationalMaterialList);
 
     List<EducationalMaterial> toEntityList(List<EducationalMaterialDto> educationalMaterialDtoList);
 

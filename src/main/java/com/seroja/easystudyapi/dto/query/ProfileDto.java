@@ -1,11 +1,15 @@
 package com.seroja.easystudyapi.dto.query;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProfileDto {
     @NotNull
     Integer id;

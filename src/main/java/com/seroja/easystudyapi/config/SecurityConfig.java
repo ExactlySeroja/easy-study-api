@@ -29,7 +29,8 @@ public class SecurityConfig {
                                 Routes.LOGIN,
                                 Routes.CHECK_EXISTING_USER_EMAIL,
                                 Routes.CHECK_EXISTING_USER_USERNAME,
-                                Routes.CHECK_EXISTING_USER_PHONE).permitAll()
+                                Routes.CHECK_EXISTING_USER_PHONE,
+                                Routes.REFRESH_TOKEN).permitAll()
 
                         .requestMatchers(Routes.SWAGGER_ENDPOINTS).permitAll()
                         .requestMatchers("/v3/api-docs", "/swagger-ui/**", "/swagger-ui.html", "/webjars/**").permitAll()
@@ -59,6 +60,7 @@ public class SecurityConfig {
                                 Routes.TEACHER_GET_ALL_APPLICATIONS,
                                 Routes.TEACHER_GET_APPLICATION_BY_ID,
                                 Routes.TEACHER_GET_STUDENTS,
+                                Routes.TEACHER_GET_STUDENTS_BY_COURSE_ID,
                                 Routes.TEACHER_MY_PROFILE
                         ).hasRole("TEACHER")
 

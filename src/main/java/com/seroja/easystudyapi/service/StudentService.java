@@ -56,12 +56,12 @@ public class StudentService {
 
     public EducationalMaterialDto getEducationalMaterialById(int id) {
         return educationalMaterialMapper.toDto(educationalMaterialRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Material was not found!")));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404))));
     }
 
     public Optional<TaskPerformanceDto> getTaskPerformanceByMaterialId(Integer id, Principal principal) {
         return Optional.ofNullable(taskPerformanceMapper.toDto(taskPerformanceRepository.findByEdMaterialIdAndDoneById(id, getId(principal))
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Performance was not found!"))));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404)))));
     }
 
     @Transactional

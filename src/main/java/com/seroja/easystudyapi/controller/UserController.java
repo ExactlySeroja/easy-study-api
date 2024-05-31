@@ -7,7 +7,7 @@ import com.seroja.easystudyapi.dto.ThemeDto;
 import com.seroja.easystudyapi.dto.UserDto;
 import com.seroja.easystudyapi.dto.jwt.JwtRequest;
 import com.seroja.easystudyapi.dto.jwt.JwtResponse;
-import com.seroja.easystudyapi.dto.query.EdMaterialAndTaskPerformanceQueryDto;
+import com.seroja.easystudyapi.dto.query.EducationalMaterialWithTaskPerformanceDto;
 import com.seroja.easystudyapi.dto.query.GetCoursesRequestDto;
 import com.seroja.easystudyapi.service.AuthService;
 import com.seroja.easystudyapi.service.UserService;
@@ -34,8 +34,8 @@ public class UserController {
     }
 
     @GetMapping(value = Routes.GET_MATERIALS_BY_THEME)
-    public List<EdMaterialAndTaskPerformanceQueryDto> getAllEducationalMaterialByTheme(@PathVariable int id) {
-        return userService.getAllEducationalMaterialsByTheme(id);
+    public List<EducationalMaterialWithTaskPerformanceDto> getAllEducationalMaterialByTheme(@PathVariable int id, Principal principal) {
+        return userService.getAllEducationalMaterialsWithTaskPerformance(id, principal);
     }
 
     @GetMapping(value = Routes.GET_ALL_CATEGORIES)

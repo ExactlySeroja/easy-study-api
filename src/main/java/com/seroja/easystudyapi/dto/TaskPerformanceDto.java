@@ -3,7 +3,9 @@ package com.seroja.easystudyapi.dto;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -12,6 +14,8 @@ import java.time.LocalDate;
  * DTO for {@link com.seroja.easystudyapi.entity.TaskPerformance}
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TaskPerformanceDto implements Serializable {
     Integer id;
     @NotNull

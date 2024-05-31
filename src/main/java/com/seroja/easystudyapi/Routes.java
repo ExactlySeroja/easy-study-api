@@ -32,6 +32,9 @@ public class Routes {
     public static final String TEACHER_CREATE_NEW_COURSE = TEACHER + "/courses";
     public static final String TEACHER_DELETE_UPDATE_COURSE = TEACHER + "/courses/{id}";
 
+    public static final String TEACHER_GET_STUDENTS_BY_COURSE_ID = TEACHER + "/courses/{id}/students";
+    public static final String TEACHER_GET_PERFORMANCE_BY_STUDENT_ID = TEACHER + "/students/{id}/performance";
+
     public static final String TEACHER_CREATE_THEME = TEACHER + "/theme";
     public static final String TEACHER_GET_THEME_BY_ID = TEACHER + "/themes/{id}";
 

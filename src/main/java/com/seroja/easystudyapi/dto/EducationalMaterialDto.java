@@ -1,7 +1,7 @@
 package com.seroja.easystudyapi.dto;
 
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class EducationalMaterialDto implements Serializable {
     Integer id;
     @NotNull
-    @Max(250)
+    @Size(max = 250)
     private String name;
     @NotNull
     Integer themeId;

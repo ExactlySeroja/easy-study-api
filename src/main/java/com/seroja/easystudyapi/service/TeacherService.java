@@ -17,7 +17,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +42,7 @@ public class TeacherService {
     private final EducationalMaterialMapper educationalMaterialMapper;
 
     private final TaskPerformanceRepository taskPerformanceRepository;
+    private final TaskPerformanceMapper taskPerformanceMapper;
 
     private final CertificateRepository certificateRepository;
     private final CertificateMapper certificateMapper;
@@ -77,12 +81,12 @@ public class TeacherService {
 
     public ThemeDto getThemeById(int id) {
         return themeMapper.toDto(themeRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Theme was not found!")));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404))));
     }
 
     public EducationalMaterialDto getEducationalMaterialById(int id) {
         return educationalMaterialMapper.toDto(educationalMaterialRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Material was not found!")));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404))));
     }
 
     public EducationalMaterialDto createEdMaterial(EducationalMaterialDto educationalMaterialDto) {
@@ -119,14 +123,14 @@ public class TeacherService {
 
     public void updateTaskPerformanceGrade(int grade, int id) {
         TaskPerformance existingEntity = taskPerformanceRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         existingEntity.setGrade(grade);
         taskPerformanceRepository.save(existingEntity);
     }
 
     public void updateApplicationStatus(int id) {
         Application existingEntity = applicationRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Entity not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
         existingEntity.setApplicationStatus(true);
         applicationRepository.save(existingEntity);
     }
@@ -141,7 +145,7 @@ public class TeacherService {
 
     public CertificateDto getCertificateById(int id) {
         return certificateMapper.toDto(certificateRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Material was not found!")));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404))));
     }
 
     public List<ApplicationWithFullInfoDto> getAllApplications(Principal principal) {
@@ -161,10 +165,34 @@ public class TeacherService {
         return userMapper.toProfileDto(userRepository.findUserByUsername(principal.getName()).get());
     }
 
+    /*public List<ProfileDto> getAllStudentsByCourse(int courseId) {
+        return userMapper.toProfileDtoList(userRepository.findStudentsByCourseId(courseId));
+    }*/
+
+    public List<StudentTaskPerformanceDto> getStudentTaskPerformances(Integer courseId) {
+        List<StudentTaskPerformanceDto> students = userRepository.findStudentsByCourseId(courseId);
+        List<TaskPerformanceDetailsDto> taskPerformances = userRepository.findTaskPerformancesByCourseId(courseId);
+
+        Map<Integer, StudentTaskPerformanceDto> studentMap = students.stream()
+                .collect(Collectors.toMap(StudentTaskPerformanceDto::getStudentId, Function.identity()));
+
+        for (TaskPerformanceDetailsDto tp : taskPerformances) {
+            StudentTaskPerformanceDto student = studentMap.get(tp.getStudentId());
+            if (student != null) {
+                student.addTaskPerformance(tp);
+            }
+        }
+
+        return new ArrayList<>(studentMap.values());
+    }
+
+    public List<TaskPerformanceDto> getTaskPerformancesByStudentId(Integer studentId) {
+        return taskPerformanceMapper.toDtoList(taskPerformanceRepository.findByDoneById(studentId));
+    }
 
     public void updateCourse(CourseDto newCourseDto, int id) {
         Course exsistCourse = courseRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Course was not found!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404)));
         Course update = courseMapper.toEntity(newCourseDto);
         courseMapper.update(exsistCourse, update);
         courseRepository.save(exsistCourse);
@@ -176,7 +204,7 @@ public class TeacherService {
 
     public void updateTheme(ThemeDto newThemeDto, int id) {
         Theme exsistTheme = themeRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Theme was not found!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404)));
         Theme update = themeMapper.toEntity(newThemeDto);
         themeMapper.update(exsistTheme, update);
         themeRepository.save(exsistTheme);
@@ -188,9 +216,10 @@ public class TeacherService {
 
     public void updateEdMaterial(EducationalMaterialDto newEducationalMaterialDto, int id) {
         EducationalMaterial educationalMaterial = educationalMaterialRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404), "Material was not found!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatusCode.valueOf(404)));
         EducationalMaterial update = educationalMaterialMapper.toEntity(newEducationalMaterialDto);
         educationalMaterialMapper.update(educationalMaterial, update);
+        educationalMaterialRepository.save(educationalMaterial);
     }
 
     public void deleteEdMaterial(int id) {
