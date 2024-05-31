@@ -14,10 +14,12 @@ public interface CertificateMapper {
 
     @Mapping(source = "application.id", target = "applicationId")
     @Mapping(source = "application.student.id", target = "studentId")
+    @Mapping(source = "teacher.id", target = "teacherId")
     CertificateDto toDto(Certificate certificate);
 
     @Mapping(source = "applicationId", target = "application.id")
     @Mapping(source = "studentId", target = "application.student.id")
+    @Mapping(source = "teacherId", target = "teacher.id")
     Certificate toEntity(CertificateDto certificateDto);
 
     List<CertificateDto> toDtoList(List<Certificate> certificates);

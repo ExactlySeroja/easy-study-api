@@ -18,4 +18,6 @@ public class CertificateDto implements Serializable {
     LocalDate dateOfIssue;
     @NotNull
     Integer studentId;
+    @NotNull
+    Integer teacherId;
 }

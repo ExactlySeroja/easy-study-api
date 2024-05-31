@@ -22,9 +22,6 @@ public interface UserRepository extends JpaRepository<AppUser, Integer> {
 
     boolean existsByPhoneNumber(String phone);
 
-    /*@Query("SELECT a.student FROM Application a WHERE a.course.id = :courseId")
-    List<AppUser> findStudentsByCourseId(@Param("courseId") Integer courseId);*/
-
     @Query("SELECT new com.seroja.easystudyapi.dto.query.TaskPerformanceDetailsDto(tp.id, em.ed_material_name, tp.dateOfCompletion, tp.answer, tp.grade, u.id) " +
             "FROM TaskPerformance tp " +
             "JOIN tp.doneBy u " +
