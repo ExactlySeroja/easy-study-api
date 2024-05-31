@@ -13,6 +13,7 @@ import com.seroja.easystudyapi.service.AuthService;
 import com.seroja.easystudyapi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -54,8 +55,8 @@ public class UserController {
             @RequestParam(name = "categoryId", required = false) Integer categoryId,
             @RequestParam(name = "minPrice", required = false) Integer minPrice,
             @RequestParam(name = "maxPrice", required = false) Integer maxPrice,
-            @RequestParam(name = "minDate", required = false) LocalDate minDate,
-            @RequestParam(name = "maxDate", required = false) LocalDate maxDate,
+            @RequestParam(name = "minDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate minDate,
+            @RequestParam(name = "maxDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate maxDate,
             @RequestParam(name = "priceSort", required = false) String priceSort,
             @RequestParam(name = "startDateSort", required = false) String startDateSort,
             @RequestParam(name = "endDateSort", required = false) String endDateSort,
